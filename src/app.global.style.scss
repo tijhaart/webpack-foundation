@@ -1,0 +1,8 @@
+@import "~foundation-sites/scss/foundation";
+@include foundation-everything;
+
+@import "./theme";
+
+h1 {
+  color: $primary-color;
+}
