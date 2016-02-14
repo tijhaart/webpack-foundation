@@ -21,23 +21,23 @@ function TodoListCtrl($scope) {
 
   function toggleDone(id) {
     let item = _.get(ctrl.indexedItems, [id]);
-    _.set(item, ['completed'], !item.completed);
+    !item.disabled && _.set(item, ['completed'], !item.completed);
   }
 
-  function iconClass(completed) {
+  function iconClass({completed, disabled}) {
     return classnames({
       [style.itemIconCompleted]: completed,
       [style.itemIconUncompleted]: !completed,
-      'default-class': true
+      [style.itemIconDisabled]: disabled
     });
   }
 
   function getItems() {
     let items = [
-      {id: 1, title: 'Finish webpack-foundation', completed: false},
-      {id: 2, title: 'Add image loading support', completed: false},
-      {id: 3, title: 'Add font loading support', completed: false},
-      {id: 4, title: 'Add bower component loading support', completed: false},
+      {id: 1, title: 'Finish webpack-foundation', completed: false, disabled: true},
+      {id: 2, title: 'Add image loading support', completed: false, disabled: false},
+      {id: 3, title: 'Add font loading support', completed: false, disabled: false},
+      {id: 4, title: 'Add bower component loading support', completed: false, disabled: false},
     ];
 
     return items;
