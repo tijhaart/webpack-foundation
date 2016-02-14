@@ -22,6 +22,7 @@ function addPlugins(c) {
 function addToEntry(c) {
   return c.updateIn(['entry'], (entry) => {
     var hotMiddleware = 'webpack-hot-middleware/client?reload=true';
+    // @TOD don't make it entry dependent
     return entry
       .set('main', [entry.get('main'), hotMiddleware])
       .set('app.style', [entry.get('app.style'), hotMiddleware])

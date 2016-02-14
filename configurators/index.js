@@ -5,6 +5,9 @@ import hotReload from './hot-reload.config.js';
 import babel from './babel.config.js';
 import style from './style.config.js';
 import bundleTracker from './bundle-tracker.config.js';
+import template from './template.config.js';
+import bower from './bower.config.js';
+import font from './font.config.js';
 
 export {
   output,
@@ -13,5 +16,8 @@ export {
   hotReload,
   babel,
   style,
-  bundleTracker
+  bundleTracker,
+  template,
+  bower,
+  font
 };

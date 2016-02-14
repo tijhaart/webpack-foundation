@@ -1,7 +1,7 @@
 import Config, {exportToWebpackConfig} from './webpack-config-creator';
 import path from 'path';
 import util from 'util';
-import webpack from 'webpack';
+import webpack, {ProvidePlugin} from 'webpack';
 
 import {
   output,
@@ -10,27 +10,23 @@ import {
   hotReload,
   babel,
   style,
-  bundleTracker
+  bundleTracker,
+  template,
+  bower,
+  font
 } from './configurators';
-
-/**
- * Bower
- * new webpack.ResolverPlugin([
-    new webpack.ResolverPlugin.DirectoryDescriptionFilePlugin("bower.json", ["main"])
-], ["normal", "loader"])
- */
 
 const env = getEnv();
 
 const config = Config({
-    profile: env.development,
+    profile: false, //env.development,
     progress: true,
     context: __dirname,
     entry: {
       main: './src/app.js',
       'app.style': './src/app.global.style.scss'
     },
-    devtool: env.development ? 'cheap-eval-source-map' : '',
+    devtool: env.development ? 'cheap-eval-source-map' : undefined,
     cache: true,
     debug: env.development,
     resolve: {
@@ -41,16 +37,16 @@ const config = Config({
   .use(output(__dirname, env.production))
 
   .use(babel())
-  
+
   .use(style({
+    // load only (s)css files that contain .local.style
     test: /^((?!\.local\.style).)*\.(css|scss)$/
   }, {
     basicSourceMap: env.development,
-    cssModules: false,
-    postCss: false,
     loaderKey: 'vendorStyle'
   }))
   .use(style({
+    // load only (s)css files that DON'T contain .local.style
     test: /\.local\.style\.(css|scss)$/
   }, {
     basicSourceMap: env.development,
@@ -58,6 +54,11 @@ const config = Config({
     postCss: true
   }))
 
+  .use(shimAngular)
+
+  .use(font())
+  .use(template())
+  .use(bower())
   .use(bundleTracker({
     indent: env.development ? 2 : undefined
   }))
@@ -84,4 +85,14 @@ function getEnv() {
     production: process.env.NODE_ENV === 'production',
     development: process.env.NODE_ENV === 'development'
   };
+}
+
+function shimAngular(c$) {
+  return c$.map(c => (
+    c
+      .setIn(['module.loaders', 'exportAngular'], {
+        test: /[\/]angular\.js$/,
+        loader: "exports?angular"
+      })
+  ));
 }

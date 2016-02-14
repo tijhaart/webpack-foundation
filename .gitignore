@@ -1,3 +1,5 @@
 node_modules
 dist
 bower_components
+stats.json
+webpack-stats.json

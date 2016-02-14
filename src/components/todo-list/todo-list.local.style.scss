@@ -1,15 +1,11 @@
-$highlight: red;
-// $text: t('primary-color');
-$text: yellow;
-
-.root {
-  box-shadow: 1px 1px 1px 1px red;
+.todoList {
+  box-shadow: 0px 5px 20px #ccc;
   padding: 1rem;
-  color: $text;
+}
 
-  transition: color .5s ease;
-
-  &:hover {
-    color: $highlight;
-  }
+.itemIconUncompleted {
+  color: #ccc;
+}
+.itemIconCompleted {
+  color: green;
 }
