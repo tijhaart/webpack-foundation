@@ -37,9 +37,12 @@ function style(loader={}, options={}) {
   return c$ =>
     c$
       .map(c => c.setIn(['module.loaders', options.loaderKey], loader))
-      .map(c => options.postcss ? c.setIn(['postcss'], [autoprefixer]) : c)
-      // @TODO don't set if sassLoader is already present
-      .map(c => c.set('sassLoader', sassLoader))
+      // @TODO don't override postcss if already present but warn instead
+      .map(c => options.postCss ? c.setIn(['postcss'], [autoprefixer]) : c)
+      // @TODO warn when sassLoader is already set
+      .map(c => c.updateIn(['sassLoader'], (sassLoaderOptions) => (
+        sassLoaderOptions || sassLoader
+      )))
     ;
 }
 
