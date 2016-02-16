@@ -8,6 +8,9 @@ import bundleTracker from './bundle-tracker.config.js';
 import template from './template.config.js';
 import bower from './bower.config.js';
 import font from './font.config.js';
+import uglify from './uglify.config.js';
+import ngAnnotate from './ng-annotate.config.js';
+import shimAngular from './shim-angular.config.js';
 
 export {
   output,
@@ -19,5 +22,8 @@ export {
   bundleTracker,
   template,
   bower,
-  font
+  font,
+  uglify,
+  ngAnnotate,
+  shimAngular
 };

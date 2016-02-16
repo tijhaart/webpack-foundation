@@ -13,7 +13,10 @@ import {
   bundleTracker,
   template,
   bower,
-  font
+  font,
+  ngAnnotate,
+  shimAngular,
+  uglify,
 } from './configurators';
 
 const env = getEnv();
@@ -36,8 +39,11 @@ const config = Config({
   })
   .use(output(__dirname, env.production))
 
+  /* JS */
+  .use(ngAnnotate())
   .use(babel())
 
+  /* CSS */
   .use(style({
     // load only (s)css files that contain .local.style
     test: /^((?!\.local\.style).)*\.(css|scss)$/
@@ -54,15 +60,18 @@ const config = Config({
     postCss: true
   }))
 
-  .use(shimAngular)
-
   .use(font())
-  .use(template())
+  .use(template(null, {
+    minify: env.production
+  }))
+
+  .use(shimAngular)
   .use(bower())
   .use(bundleTracker({
     indent: env.development ? 2 : undefined
   }))
   .useIf(env.development, hotReload())
+  .useIf(env.production, uglify())
   .use(devServer({
       contentBase: path.resolve('./dist'),
       host: 'localhost',
@@ -85,14 +94,4 @@ function getEnv() {
     production: process.env.NODE_ENV === 'production',
     development: process.env.NODE_ENV === 'development'
   };
-}
-
-function shimAngular(c$) {
-  return c$.map(c => (
-    c
-      .setIn(['module.loaders', 'exportAngular'], {
-        test: /[\/]angular\.js$/,
-        loader: "exports?angular"
-      })
-  ));
 }
