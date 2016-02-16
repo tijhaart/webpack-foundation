@@ -6,6 +6,8 @@ import classnames from 'classnames';
 export default TodoListCtrl;
 
 function TodoListCtrl($scope) {
+  "ngInject";
+
   console.log('Hello from TodoListCtrl');
   let ctrl = this;
 
@@ -17,6 +19,7 @@ function TodoListCtrl($scope) {
 
     ctrl.toggleDone = toggleDone;
     ctrl.iconClass = iconClass;
+    ctrl.itemTextClass = itemTextClass;
   }
 
   function toggleDone(id) {
@@ -26,10 +29,16 @@ function TodoListCtrl($scope) {
 
   function iconClass({completed, disabled}) {
     return classnames({
+      'fi-check': !disabled,
+      'fi-lock': disabled,
       [style.itemIconCompleted]: completed,
       [style.itemIconUncompleted]: !completed,
       [style.itemIconDisabled]: disabled
     });
+  }
+
+  function itemTextClass({completed}) {
+    return classnames({[style.itemTextCompleted]: completed});
   }
 
   function getItems() {
