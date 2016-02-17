@@ -9,13 +9,6 @@ import express from 'express';
 import devMiddleware from 'webpack-dev-middleware';
 import hotMiddleware from 'webpack-hot-middleware';
 
-import pkg from './package.json';
-
-import Mustache from 'mustache';
-import fs from 'fs';
-const template = fs.readFileSync('./src/index.mustache', 'utf-8');
-Mustache.parse(template);
-
 let app = express();
 let compiler = webpack(config);
 
@@ -24,11 +17,10 @@ app.use(hotMiddleware(compiler));
 
 const {host, port} = config.devServer;
 
+app.get(/\.html$/i, (req, res) => res.sendStatus(403));
+
 app.get('*', (req, res) => {
-	// res.sendFile(path.join(__dirname, 'app', 'index.html'));
-	res.send(Mustache.render(template, {
-		pkg: pkg
-	}));
+	res.sendFile(path.join(__dirname, 'src', 'index.html'));
 });
 
 app.listen(port, host, err => {

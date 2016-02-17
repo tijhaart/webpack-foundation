@@ -11,6 +11,7 @@ import font from './font.config.js';
 import uglify from './uglify.config.js';
 import ngAnnotate from './ng-annotate.config.js';
 import shimAngular from './shim-angular.config.js';
+import ngTemplateCache from './ng-template-cache.config.js';
 
 export {
   output,
@@ -25,5 +26,6 @@ export {
   font,
   uglify,
   ngAnnotate,
-  shimAngular
+  shimAngular,
+  ngTemplateCache
 };

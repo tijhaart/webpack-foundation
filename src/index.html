@@ -2,12 +2,14 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>{{ pkg.name }} {{ pkg.version }}</title>
+    <title>Webpack powered asset server</title>
 
     <script async src="/static/app.style.js"></script>
     <script async src="/static/main.js"></script>
   </head>
   <body>
-    <todo-list></todo-list>
+    <section>
+      <div ng-include="'views/todo/index.html'"></div>
+    </section>
   </body>
 </html>

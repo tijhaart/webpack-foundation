@@ -17,6 +17,7 @@ import {
   ngAnnotate,
   shimAngular,
   uglify,
+  ngTemplateCache
 } from './configurators';
 
 const env = getEnv();
@@ -64,6 +65,7 @@ const config = Config({
   .use(template(null, {
     minify: env.production
   }))
+  .use(ngTemplateCache(null, {context: __dirname}))
 
   .use(shimAngular)
   .use(bower())

@@ -30,6 +30,7 @@
     "express": "^4.13.4",
     "file-loader": "^0.8.5",
     "foundation-sites": "^6.1.2",
+    "html-loader": "^0.4.3",
     "immutable": "^3.7.6",
     "lodash": "^4.3.0",
     "lodash.indexby": "^3.1.1",
