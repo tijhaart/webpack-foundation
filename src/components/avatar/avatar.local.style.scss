@@ -1,0 +1,23 @@
+@mixin size($factor:2, $base:16px) {
+  width: $base * $factor;
+  height: $base * $factor;
+}
+
+.root {
+  margin: 2px;
+  box-shadow: 0 0 .2rem 0;
+  display: inline-block;
+  border-radius: 50%;
+}
+
+.medium {
+  @include size(2);
+}
+
+.body {
+  @extend .medium;
+  display: block;
+  border-radius: 50%;
+  background: #ccc;
+  background-size: 100%;
+}
