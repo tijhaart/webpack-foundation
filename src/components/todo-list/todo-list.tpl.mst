@@ -2,17 +2,18 @@
   <div
     ng-repeat="item in ctrl.items"
     class="row">
-    <div class="columns">
-      <i
-        class="${ style.itemIcon }"
-        ng-class="ctrl.iconClass(item)"
-        ng-click="ctrl.toggleDone(item.id)">
-      </i>
-      <span
-        class="${ style.itemText }"
-        ng-class="ctrl.itemTextClass(item)"
-        ng-bind="::item.title">
-      </span>
+      <div class="columns">
+        <i
+          class="${ style.itemIcon }"
+          ng-class="ctrl.iconClass(item)"
+          ng-click="ctrl.toggleDone(item.id)">
+        </i>
+        <span
+          class="${ style.itemText }"
+          ng-class="ctrl.itemTextClass(item)"
+          ng-bind="::item.title">
+        </span>
+      </div>
     </div>
   </div>
 </div>

@@ -27,5 +27,6 @@ export {
   uglify,
   ngAnnotate,
   shimAngular,
-  ngTemplateCache
+  ngTemplateCache,
+  image
 };

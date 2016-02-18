@@ -1,13 +1,20 @@
+import defaultAvatar from './images/avatar.png';
+
 class AvatarCtrl {
   constructor($scope) {
     'ngInject';
   }
 
   avatarBodyStyle(props) {
-    const {src} = props || this.props;
+    let {src} = props || this.props || {};
+
+    if (!src) {
+      src = defaultAvatar;
+    }
 
     return {
-      backgroundImage: src ? `url(${src})` : ''
+      color: 'blue',
+      backgroundImage: `url(${src})`
     };
   }
 }

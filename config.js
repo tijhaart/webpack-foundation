@@ -17,7 +17,8 @@ import {
   ngAnnotate,
   shimAngular,
   uglify,
-  ngTemplateCache
+  ngTemplateCache,
+  image
 } from './configurators';
 
 const env = getEnv();
@@ -58,15 +59,28 @@ const config = Config({
   }, {
     basicSourceMap: env.development,
     cssModules: true,
-    postCss: true
+    postCss: true,
+    bundle: true,
+    bundleId: 'app.components.css'
   }))
 
+  // IMAGE
+  .use(image({
+    query: {
+      name: env.production ? '[hash].[ext]' : undefined
+    }
+  }))
+
+  // FONT
   .use(font())
+
+  // TEMPLATE
   .use(template(null, {
     minify: env.production
   }))
   .use(ngTemplateCache(null, {context: __dirname}))
 
+  // MISC
   .use(shimAngular)
   .use(bower())
   .use(bundleTracker({
