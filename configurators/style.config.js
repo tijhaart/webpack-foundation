@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import autoprefixer from 'autoprefixer';
+import ExtractTextPlugin from 'extract-text-webpack-plugin';
 
 export default style;
 
@@ -8,8 +9,17 @@ function style(loader={}, options={}) {
     cssModules: false,
     basicSourceMap: false,
     loaderKey: 'style',
-    postCss: false
+    postCss: false,
+    bundle: false
   });
+
+  let extractTextPlugin = void 0;
+
+  if (!options.bundleId) {
+    _.set(options, ['bundleId'], `${options.loaderKey}.css`);
+  }
+
+  extractTextPlugin = new ExtractTextPlugin(options.bundleId, {allChunks: true});
 
   let cssLoaderOptions = [];
   if (options.cssModules) {
@@ -34,6 +44,12 @@ function style(loader={}, options={}) {
     sourceComments: options.basicSourceMap
   };
 
+  if (options.bundle) {
+    _.unset(loader, ['loaders', 0]);
+    _.set(loader, 'loader', extractTextPlugin.extract(loader.loaders));
+    _.unset(loader, 'loaders');
+  }
+
   return c$ =>
     c$
       .map(c => c.setIn(['module.loaders', options.loaderKey], loader))
@@ -43,6 +59,13 @@ function style(loader={}, options={}) {
       .map(c => c.updateIn(['sassLoader'], (sassLoaderOptions) => (
         sassLoaderOptions || sassLoader
       )))
+      .map(c => {
+        if (options.bundle) {
+          return c.setIn(['plugins', options.loaderKey], extractTextPlugin);
+        }
+
+        return c;
+      })
     ;
 }
 

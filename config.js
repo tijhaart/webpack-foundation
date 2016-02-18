@@ -29,7 +29,7 @@ const config = Config({
     context: __dirname,
     entry: {
       main: './src/app.js',
-      'app.style': './src/app.global.style.scss'
+      // 'app.style': './src/app.global.style.scss'
     },
     devtool: env.development ? 'cheap-eval-source-map' : undefined,
     cache: true,
@@ -51,7 +51,9 @@ const config = Config({
     test: /^((?!\.local\.style).)*\.(css|scss)$/
   }, {
     basicSourceMap: env.development,
-    loaderKey: 'vendorStyle'
+    loaderKey: 'vendorStyle',
+    bundle: true,
+    bundleId: 'app.css'
   }))
   .use(style({
     // load only (s)css files that DON'T contain .local.style

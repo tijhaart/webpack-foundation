@@ -1,9 +1,13 @@
 @import "~foundation-icon-fonts/foundation-icons.css";
 @import "~foundation-sites/scss/foundation";
-@include foundation-everything;
+@include foundation-everything($flex:true);
 
 @import "./theme";
 
 h1 {
   color: $primary-color;
+}
+
+avatar {
+  border: 1px solid yellow;
 }

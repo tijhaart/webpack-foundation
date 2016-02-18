@@ -25,7 +25,7 @@ function addToEntry(c) {
     // @TOD don't make it entry dependent
     return entry
       .set('main', [entry.get('main'), hotMiddleware])
-      .set('app.style', [entry.get('app.style'), hotMiddleware])
+      // .set('app.style', [entry.get('app.style'), hotMiddleware])
       ;
 
     // if (List.isList(entry)) {
