@@ -12,6 +12,7 @@ import uglify from './uglify.config.js';
 import ngAnnotate from './ng-annotate.config.js';
 import shimAngular from './shim-angular.config.js';
 import ngTemplateCache from './ng-template-cache.config.js';
+import image from './image.config.js';
 
 export {
   output,
@@ -27,5 +28,6 @@ export {
   uglify,
   ngAnnotate,
   shimAngular,
-  ngTemplateCache
+  ngTemplateCache,
+  image
 };

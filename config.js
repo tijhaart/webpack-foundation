@@ -17,7 +17,8 @@ import {
   ngAnnotate,
   shimAngular,
   uglify,
-  ngTemplateCache
+  ngTemplateCache,
+  image
 } from './configurators';
 
 const env = getEnv();
@@ -28,7 +29,7 @@ const config = Config({
     context: __dirname,
     entry: {
       main: './src/app.js',
-      'app.style': './src/app.global.style.scss'
+      // 'app.style': './src/app.global.style.scss'
     },
     devtool: env.development ? 'cheap-eval-source-map' : undefined,
     cache: true,
@@ -50,7 +51,9 @@ const config = Config({
     test: /^((?!\.local\.style).)*\.(css|scss)$/
   }, {
     basicSourceMap: env.development,
-    loaderKey: 'vendorStyle'
+    loaderKey: 'vendorStyle',
+    bundle: true,
+    bundleId: 'app.css'
   }))
   .use(style({
     // load only (s)css files that DON'T contain .local.style
@@ -58,15 +61,28 @@ const config = Config({
   }, {
     basicSourceMap: env.development,
     cssModules: true,
-    postCss: true
+    postCss: true,
+    bundle: true,
+    bundleId: 'app.components.css'
   }))
 
+  // IMAGE
+  .use(image({
+    query: {
+      name: env.production ? '[hash].[ext]' : undefined
+    }
+  }))
+
+  // FONT
   .use(font())
+
+  // TEMPLATE
   .use(template(null, {
     minify: env.production
   }))
   .use(ngTemplateCache(null, {context: __dirname}))
 
+  // MISC
   .use(shimAngular)
   .use(bower())
   .use(bundleTracker({
