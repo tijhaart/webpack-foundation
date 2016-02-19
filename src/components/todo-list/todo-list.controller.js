@@ -1,5 +1,4 @@
 import _ from 'lodash';
-import indexBy from 'lodash.indexby';
 import style from './todo-list.local.style.scss';
 import classnames from 'classnames';
 
