@@ -1,4 +1,4 @@
-import Config, {exportToWebpackConfig} from './webpack-config-creator';
+import Config, {exportToWebpackConfig} from 'webpack-config-builder';
 import path from 'path';
 import util from 'util';
 import webpack, {ProvidePlugin} from 'webpack';

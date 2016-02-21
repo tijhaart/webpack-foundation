@@ -50,7 +50,8 @@
     "webpack": "^1.12.13",
     "webpack-dev-server": "^1.14.1",
     "webpack-hot-middleware": "^2.7.1",
-    "wrap-loader": "^0.1.0"
+    "wrap-loader": "^0.1.0",
+    "webpack-config-builder": "ssh+git@bitbucket.org:tijhaart/webpack-config-builder.git#0.0.1"
   },
   "devDependencies": {
     "autoprefixer-loader": "^3.2.0",
