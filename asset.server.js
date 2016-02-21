@@ -17,7 +17,8 @@ app.use(hotMiddleware(compiler));
 
 const {host, port} = config.devServer;
 
-app.get(/\.html$/i, (req, res) => res.sendStatus(403));
+// @TODO don't send 403 when env.production is true
+app.get(/\.(html|css)$/i, (req, res) => res.sendStatus(403));
 
 app.get('*', (req, res) => {
 	res.sendFile(path.join(__dirname, 'src', 'index.html'));
