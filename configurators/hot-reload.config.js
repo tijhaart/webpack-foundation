@@ -23,6 +23,9 @@ function addToEntry(c) {
   return c.updateIn(['entry'], (entry) => {
     var hotMiddleware = 'webpack-hot-middleware/client?reload=true';
     // @TOD don't make it entry dependent
+      // if list then put hot client on top of list (unshift)
+      // if map && map.<item> is string then convert to array
+      // if map && map.<item> is array and doesn't contain hot client then add hot client
     return entry
       .set('main', [entry.get('main'), hotMiddleware])
       // .set('app.style', [entry.get('app.style'), hotMiddleware])
