@@ -1,0 +1,5 @@
+@import "~foundation-icon-fonts/foundation-icons.css";
+@import "~foundation-sites/scss/foundation";
+@import "../theme/theme";
+
+@include foundation-everything($flex:true);
