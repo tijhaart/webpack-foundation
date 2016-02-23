@@ -5,6 +5,16 @@ class AvatarCtrl {
     'ngInject';
   }
 
+  setActive() {
+    // @TODO how to change prop.isActive;
+  }
+
+  avatarClassList() {
+    return {
+      'is_active': false
+    }
+  }
+
   avatarBodyStyle(props) {
     let {src} = props || this.props || {};
 

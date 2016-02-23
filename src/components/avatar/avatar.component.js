@@ -1,5 +1,5 @@
 import Avatar from './avatar.module';
-import template from './avatar.tpl.mst';
+import templateUrl from './avatar.html';
 import style from './avatar.local.style.scss';
 import AvatarCtrl from './avatar.ctrl';
 
@@ -8,5 +8,5 @@ export default Avatar.component('avatar', {
     props: '='
   },
   controller: AvatarCtrl,
-  template: template({style}),
+  templateUrl: templateUrl,
 });

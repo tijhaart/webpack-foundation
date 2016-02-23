@@ -3,26 +3,32 @@
   height: $base * $factor;
 }
 
-.root {
-  margin: 2px;
-  box-shadow: 0 0 .2rem 0;
-  display: inline-block;
-  border-radius: 50%;
-}
-
 avatar {
   display: flex;
 }
 
-.medium {
-  @include size(2);
-}
+.avatar {
+  @mixin medium {
+    @include size(2);
+  }
 
-.body {
-  @extend .medium;
-  display: block;
-  border-radius: 50%;
-  background: #ccc;
-  background-size: 100%;
-  background-color: green;
+  transition: transform .5s ease;
+
+  &__root {
+    margin: 2px;
+    display: inline-block;
+    border-radius: 50%;
+  }
+
+  &__body {
+    @include medium;
+    display: block;
+    border-radius: 50%;
+    background-size: 100%;
+    background-color: #666;
+  }
+
+  &.is_active {
+    transform: scale(1.2);
+  }
 }

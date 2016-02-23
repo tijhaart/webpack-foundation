@@ -1,5 +1,0 @@
-<div class="${ style.root }">
-  <div
-    ng-style="::$ctrl.avatarBodyStyle()"
-    class="${ style.body }"></div>
-</div>
