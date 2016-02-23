@@ -20,8 +20,4 @@ function getItems() {
   return items;
 }
 
-function indexItems(items) {
-  return indexBy(items, 'id');
-}
-
 export default TodoViewCtrl;
