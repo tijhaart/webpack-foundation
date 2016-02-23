@@ -23,13 +23,16 @@ function style(loader={}, options={}) {
 
   let cssLoaderOptions = [];
   if (options.cssModules) {
-    cssLoaderOptions.push('modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]');
+    cssLoaderOptions.push('modules&importLoaders=1&localIdentName=[local]__[hash:base64:5]');
   }
   if (options.basicSourceMap) {
     cssLoaderOptions.push('sourceMap');
   }
 
-  let loaders = ['style', `css?${cssLoaderOptions.join('&')}`];
+  let loaders = ['style'];
+
+  loaders.push(`css?${cssLoaderOptions.join('&')}`);
+
   if (options.postCss) {
     loaders.push('postcss');
   }
@@ -54,7 +57,7 @@ function style(loader={}, options={}) {
     c$
       .map(c => c.setIn(['module.loaders', options.loaderKey], loader))
       // @TODO don't override postcss if already present but warn instead
-      .map(c => options.postCss ? c.setIn(['postcss'], [autoprefixer]) : c)
+      .map(c => options.postCss ? c.setIn(['postcss'], [autoprefixer()]) : c)
       // @TODO warn when sassLoader is already set
       .map(c => c.updateIn(['sassLoader'], (sassLoaderOptions) => (
         sassLoaderOptions || sassLoader

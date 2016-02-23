@@ -85,7 +85,7 @@ const config = Config({
   // IMAGE
   .use(image({
     query: {
-      name: env.production ? '[hash].[ext]' : undefined
+      name: env.production ? 'images/[name]__[hash].[ext]' : undefined
     }
   }))
 
@@ -119,6 +119,7 @@ const config = Config({
 ;
 
 let _config = config.toJs();
+// console.log(util.inspect(_config.module.loaders, {depth: 3, colors: true}));
 console.log(util.inspect(_config, {depth: 3, colors: true}));
 
 export default _config;
