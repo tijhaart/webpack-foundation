@@ -1,5 +1,7 @@
 import webpack from 'webpack';
-import Immutable, {List} from 'immutable';
+import Immutable, {List, Map} from 'immutable';
+
+let hotMiddlewareClient = 'webpack-hot-middleware/client?reload=true';
 
 export default hotReload;
 
@@ -21,21 +23,25 @@ function addPlugins(c) {
 
 function addToEntry(c) {
   return c.updateIn(['entry'], (entry) => {
-    var hotMiddleware = 'webpack-hot-middleware/client?reload=true';
-    // @TOD don't make it entry dependent
-      // if list then put hot client on top of list (unshift)
-      // if map && map.<item> is string then convert to array
-      // if map && map.<item> is array and doesn't contain hot client then add hot client
-    return entry
-      .set('main', [entry.get('main'), hotMiddleware])
-      // .set('app.style', [entry.get('app.style'), hotMiddleware])
-      ;
+    if (List.isList(entry)) {
+      return entry.unshift(hotMiddlewareClient);
+    } else if (Map.isMap(entry)) {
+      return entry.map(entryItem => {
+        if (List.isList(entryItem) && !entryItem.findIndex(containsHotClient) > -1) {
+          return entryItem.push(hotMiddlewareClient);
+        }
 
-    // if (List.isList(entry)) {
-    //   entry = entry.unshift('webpack-hot-middleware/client?reload=true');
-    // } else {
-    //   console.log('[hot-reload.config] Error: Only Immutable.List is currently supported');
-    // }
-    // return entry;
+        return List([entryItem, hotMiddlewareClient]);
+      });
+
+    } else {
+      console.log('[hot-reload.config] Error: List or Map required');
+    }
+
+    return entry;
   });
+}
+
+function containsHotClient(entryPath) {
+  return RegExp('^webpack-hot-middleware\/client', 'i').test(entryPath);
 }
