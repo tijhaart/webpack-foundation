@@ -29,7 +29,9 @@ const config = Config({
     context: __dirname,
     entry: {
       main: './src/app.js',
-      // 'app.style': './src/app.global.style.scss'
+      'app.style': [
+        './src/styles/app.foundation.style.scss',
+        './src/styles/app.global.style.scss']
     },
     devtool: env.development ? 'cheap-eval-source-map' : undefined,
     cache: true,
@@ -47,23 +49,37 @@ const config = Config({
 
   /* CSS */
   .use(style({
-    // load only (s)css files that contain .local.style
-    test: /^((?!\.local\.style).)*\.(css|scss)$/
+    // load only (s)css files that DON'T contain .local.style
+    test: /app\.foundation\.style\.scss$/,
   }, {
     basicSourceMap: env.development,
     loaderKey: 'vendorStyle',
-    bundle: true,
-    bundleId: 'app.css'
+    postCss: false,
+    bundle: env.production,
+    bundleId: 'css/vendor.style.css'
   }))
   .use(style({
-    // load only (s)css files that DON'T contain .local.style
+    // load only (s)css files that contain .local.style
     test: /\.local\.style\.(css|scss)$/
   }, {
     basicSourceMap: env.development,
-    cssModules: true,
+    loaderKey: 'appComponents',
+    // css-modules are a bit tricky with hot-updating because the css-loader exports an object, so disabled for now
+    cssModules: false,
     postCss: true,
-    bundle: true,
-    bundleId: 'app.components.css'
+    bundle: env.production,
+    bundleId: 'css/app.components.css'
+  }))
+  .use(style({
+    // load only (s)css files that DON'T contain .local.style
+    test: /^((?!\.local\.style).)*\.(css|scss)$/,
+    exclude: /(node_modules|bower_components|app\.foundation\.style\.scss)/
+  }, {
+    basicSourceMap: env.development,
+    loaderKey: 'appStyle',
+    postCss: true,
+    bundle: env.production,
+    bundleId: 'css/app.css'
   }))
 
   // IMAGE
