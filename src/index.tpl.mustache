@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Webpack foundation</title>
+
+    ${#env.production}
+    <link rel="stylesheet" href="${ publicPath }css/vendor.css">
+    <link rel="stylesheet" href="${ publicPath }css/app.css">
+    <link rel="stylesheet" href="${ publicPath }css/app.components.css">
+    ${/env.production}
+
+    ${#env.development}
+    <script async src="${ publicPath }app.style.js"></script>
+    ${/env.development}
+    <script async src="${ publicPath }main.js"></script>
+  </head>
+  <body>
+    <section>
+      <div ng-include="'views/todo/index.ngtpl.html'"></div>
+    </section>
+  </body>
+</html>

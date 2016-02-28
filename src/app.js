@@ -1,6 +1,8 @@
-import Log from 'components/log/Log';
 import FoundationTodo from 'modules/FoundationTodo';
 import angular from 'angular';
+
+console.log('process.en.NODE_ENV', process.env.NODE_ENV);
+console.log('publicPath', __webpack_public_path__);
 
 angular.element(document).ready((event) => {
   angular.bootstrap(document.body, [FoundationTodo.name], {

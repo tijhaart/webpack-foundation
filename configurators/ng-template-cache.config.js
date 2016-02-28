@@ -8,7 +8,7 @@ function ngTemplateCache(loader, options) {
   });
 
   loader = _.defaults(loader, {
-    test: /\.html$/i,
+    test: /\.ngtpl\.html$/i,
     loaders: [
       `ngtemplate?relativeTo=${options.context}/src/`,
       'html'

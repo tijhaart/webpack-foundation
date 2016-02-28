@@ -1,18 +1,20 @@
-import output from './output.config.js';
-import eslint from './eslint.config.js';
-import devServer from './dev-server.config.js';
-import hotReload from './hot-reload.config.js';
-import babel from './babel.config.js';
-import style from './style.config.js';
-import bundleTracker from './bundle-tracker.config.js';
-import template from './template.config.js';
-import bower from './bower.config.js';
-import font from './font.config.js';
-import uglify from './uglify.config.js';
-import ngAnnotate from './ng-annotate.config.js';
-import shimAngular from './shim-angular.config.js';
-import ngTemplateCache from './ng-template-cache.config.js';
-import image from './image.config.js';
+import output from './output.config';
+import eslint from './eslint.config';
+import devServer from './dev-server.config';
+import hotReload from './hot-reload.config';
+import babel from './babel.config';
+import style from './style.config';
+import bundleTracker from './bundle-tracker.config';
+import template from './template.config';
+import bower from './bower.config';
+import font from './font.config';
+import uglify from './uglify.config';
+import ngAnnotate from './ng-annotate.config';
+import shimAngular from './shim-angular.config';
+import ngTemplateCache from './ng-template-cache.config';
+import image from './image.config';
+import defineNodeEnv from './define-env.config';
+import htmlWebpack from './html-webpack';
 
 export {
   output,
@@ -29,5 +31,7 @@ export {
   ngAnnotate,
   shimAngular,
   ngTemplateCache,
-  image
+  image,
+  defineNodeEnv,
+  htmlWebpack
 };

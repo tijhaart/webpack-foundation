@@ -1,5 +1,5 @@
 {
-  "name": "webpack-suggecipe",
+  "name": "webpack-foundation",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -11,7 +11,7 @@
     "export-prod-stats": "NODE_ENV=production babel-node export-stats"
   },
   "keywords": [],
-  "author": "",
+  "author": "Raymond Tijhaar <contact@raymond.tijhaar.com>",
   "license": "MIT",
   "dependencies": {
     "ansi-regex": "^2.0.0",
@@ -32,7 +32,9 @@
     "extract-text-webpack-plugin": "^1.0.1",
     "file-loader": "^0.8.5",
     "foundation-sites": "^6.1.2",
+    "hogan.js": "^3.0.2",
     "html-loader": "^0.4.3",
+    "html-webpack-plugin": "^2.9.0",
     "immutable": "^3.7.6",
     "lodash": "^4.3.0",
     "mustache": "^2.2.1",
@@ -49,11 +51,11 @@
     "url": "^0.11.0",
     "url-loader": "^0.5.7",
     "webpack": "^1.12.13",
+    "webpack-config-builder": "ssh+git@bitbucket.org:tijhaart/webpack-config-builder.git#0.0.2",
     "webpack-dev-middleware": "^1.5.1",
     "webpack-dev-server": "^1.14.1",
     "webpack-hot-middleware": "^2.7.1",
-    "wrap-loader": "^0.1.0",
-    "webpack-config-builder": "ssh+git@bitbucket.org:tijhaart/webpack-config-builder.git#0.0.1"
+    "wrap-loader": "^0.1.0"
   },
   "devDependencies": {
     "autoprefixer-loader": "^3.2.0",

@@ -2,6 +2,9 @@
 'use strict';
 
 import path from 'path';
+import fs from 'fs';
+import _ from 'lodash';
+import util from 'util';
 import webpack from 'webpack';
 import webpackDevServer from 'webpack-dev-server';
 import config from './webpack.config.js';
@@ -20,8 +23,20 @@ const {host, port} = config.devServer;
 // @TODO don't send 403 when env.production is true
 app.get(/\.(html|css)$/i, (req, res) => res.sendStatus(403));
 
-app.get('*', (req, res) => {
-	res.sendFile(path.join(__dirname, 'src', 'index.html'));
+app.get('*', (req, res, next) => {
+	var filename = path.join(compiler.outputPath,'index.html');
+  compiler.outputFileSystem.readFile(filename, (err, result) => {
+    if (err) {
+			console.log(util.inspect(
+				`[asset.server] Unable to find "${filename}". Did you configure/use html-webpack?`, {depth: 1, colors: true}
+			));
+      return next(err);
+    }
+
+    res.set('content-type','text/html');
+    res.send(result);
+    res.end();
+  });
 });
 
 app.listen(port, host, err => {

@@ -2,17 +2,20 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Webpack powered asset server</title>
-
-    <link rel="stylesheet" href="/static/app.css">
-    <link rel="stylesheet" href="/static/app.components.css">
-
-    <!-- <script async src="/static/app.style.js"></script> -->
-    <script async src="/static/main.js"></script>
+    <title>Webpack foundation</title>
+    <% if (env.production) { %>
+    <link rel="stylesheet" href="<%= publicPath %>css/vendor.css">
+    <link rel="stylesheet" href="<%= publicPath %>css/app.css">
+    <link rel="stylesheet" href="<%= publicPath %>css/app.components.css">
+    <% } %>
+    <% if (env.development) { %>
+    <script async src="<%= publicPath %>app.style.js"></script>
+    <% } %>
+    <script async src="<%= publicPath %>main.js"></script>
   </head>
   <body>
     <section>
-      <div ng-include="'views/todo/index.html'"></div>
+      <div ng-include="'views/todo/index.ngtpl.html'"></div>
     </section>
   </body>
 </html>
