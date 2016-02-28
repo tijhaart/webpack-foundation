@@ -6,7 +6,7 @@ import template from './todo-list.tpl.mustache';
 export default TodoList.component('todoList', {
   controller: TodoListCtrl,
   controllerAs: 'ctrl',
-  template: template({style}),
+  template: template({ style }),
   bindings: {
     items: '='
   }
