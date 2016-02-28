@@ -53,7 +53,7 @@ function style(loader={}, options={}) {
     _.unset(loader, 'loaders');
   }
 
-  return c$ =>
+  return c$ => (
     c$
       .map(c => c.setIn(['module.loaders', options.loaderKey], loader))
       // @TODO don't override postcss if already present but warn instead
@@ -69,7 +69,7 @@ function style(loader={}, options={}) {
 
         return c;
       })
-    ;
+    );
 }
 
 /**
