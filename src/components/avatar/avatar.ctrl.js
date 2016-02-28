@@ -1,7 +1,7 @@
 import defaultAvatar from './images/avatar.png';
 
 class AvatarCtrl {
-  constructor($scope) {
+  constructor() {
     'ngInject';
   }
 
@@ -10,13 +10,18 @@ class AvatarCtrl {
   }
 
   avatarClassList() {
+    // Y U NO want ESLint?
+    // jshint ignore:start
+    // jscs:disable
     return {
-      'is_active': false
-    }
+      is_active: false
+    };
+    // jscs:enable
+    // jshint ignore:end
   }
 
   avatarBodyStyle(props) {
-    let {src} = props || this.props || {};
+    let { src } = props || this.props || {};
 
     if (!src) {
       src = defaultAvatar;

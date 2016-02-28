@@ -59,6 +59,10 @@
   },
   "devDependencies": {
     "autoprefixer-loader": "^3.2.0",
+    "jscs": "^2.10.1",
+    "jscs-loader": "^0.2.0",
+    "jshint": "^2.9.1",
+    "jshint-loader": "^0.8.3",
     "raw-loader": "^0.5.1",
     "watch-run": "^1.2.4",
     "webpack-bundle-tracker": "0.0.93"

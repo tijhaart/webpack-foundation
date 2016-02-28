@@ -1,6 +1,5 @@
-import Rx from 'rx';
-Rx.config.longStackSupport = true;
-
+// jscs: disable
+// jshint ignore:start
 import Config, {exportToWebpackConfig} from 'webpack-config-builder';
 import path from 'path';
 import util from 'util';
@@ -73,6 +72,7 @@ const config = Config({
   .use(ngTemplateCache(null, {context: __dirname}))
 
   // MISC
+  .useIf(env.development, codeStyle)
   .use(defineNodeEnv())
   .use(shimAngular)
   .use(bower())
@@ -157,6 +157,16 @@ function optimizeBuild(c$) {
     c.mergeIn(['plugins'], {
       occurenceOrderPlugin: new webpack.optimize.OccurenceOrderPlugin(),
       noErrorsPlugin: new webpack.NoErrorsPlugin()
+    })
+  ));
+}
+
+function codeStyle(c$) {
+  return c$.map(c => (
+    c.setIn(['module.preLoaders', 'codeStyle'], {
+      test: /\.js$/,
+      loaders: ['jscs', 'jshint'],
+      include: __dirname + '/src'
     })
   ));
 }
