@@ -80,6 +80,7 @@ const config = Config({
     indent: env.development ? 2 : undefined
   }))
   .useIf(env.development, hotReload())
+  .useIf(env.production, optimizeBuild)
   .useIf(env.production, uglify())
   .use(devServer({
       contentBase: path.resolve('./dist'),
@@ -148,4 +149,14 @@ function appStyle(config) {
       bundleId: 'css/app.css'
     }))
   ;
+}
+
+/* @note hotReload requires some these as well, but hotReload is not used in production build */
+function optimizeBuild(c$) {
+  return c$.map(c => (
+    c.mergeIn(['plugins'], {
+      occurenceOrderPlugin: new webpack.optimize.OccurenceOrderPlugin(),
+      noErrorsPlugin: new webpack.NoErrorsPlugin()
+    })
+  ));
 }
