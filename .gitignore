@@ -4,3 +4,4 @@ bower_components
 stats.json
 webpack-stats.json
 src/config/local.config.js
+npm-debug.log
