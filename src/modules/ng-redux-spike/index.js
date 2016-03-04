@@ -54,6 +54,8 @@ const COUNTER_SAVE_ERROR = 'COUNTER_SAVE_ERROR';
 function onRun($ngRedux) {
   'ngInject';
 
+  console.log($ngRedux);
+
   // (action) => {
   //   const actions = [COUNTER_INCREMENT, COUNTER_DECREMENT, COUNTER_RESET];
   //   if (actions.indexOf(action.type) > -1) {

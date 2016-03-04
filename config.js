@@ -42,7 +42,9 @@ const config = Config({
     devtool: env.development ? '#cheap-eval-inline-source-map' : undefined,
     resolve: {
       root: [path.resolve(__dirname, 'src')],
-      modulesDirectories: [path.resolve(__dirname, 'node_modules')]
+      modulesDirectories: [
+        path.resolve(__dirname, 'node_modules'),
+      ]
     }
   })
   .use(output(__dirname, env.production))
