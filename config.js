@@ -39,7 +39,7 @@ const config = Config({
         './src/styles/app.foundation.style.scss',
         './src/styles/app.global.style.scss']
     },
-    devtool: env.development ? 'cheap-eval-source-map' : undefined,
+    devtool: env.development ? '#cheap-eval-inline-source-map' : undefined,
     resolve: {
       root: [path.resolve(__dirname, 'src')],
       modulesDirectories: [path.resolve(__dirname, 'node_modules')]
@@ -72,7 +72,7 @@ const config = Config({
   .use(ngTemplateCache(null, {context: __dirname}))
 
   // MISC
-  .useIf(env.development, codeStyle)
+  // .useIf(env.development, codeStyle)
   .use(defineNodeEnv())
   .use(shimAngular)
   .use(bower())
