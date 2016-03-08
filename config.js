@@ -157,6 +157,8 @@ function appStyle(config) {
 function optimizeBuild(c$) {
   return c$.map(c => (
     c.mergeIn(['plugins'], {
+      /* dedupe = deduplicate. shrinks dependecy tree by using the same dependecy once when there are duplicates of it */
+      dedupePlugin: new webpack.optimize.DedupePlugin(),
       occurenceOrderPlugin: new webpack.optimize.OccurenceOrderPlugin(),
       noErrorsPlugin: new webpack.NoErrorsPlugin()
     })
