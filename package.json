@@ -55,6 +55,7 @@
     "sass-loader": "^3.1.2",
     "strip-ansi": "^3.0.0",
     "style-loader": "^0.13.0",
+    "updeep": "^0.13.0",
     "url": "^0.11.0",
     "url-loader": "^0.5.7",
     "webpack-config-builder": "ssh+git@bitbucket.org:tijhaart/webpack-config-builder.git#0.0.3",

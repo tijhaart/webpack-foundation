@@ -22,20 +22,22 @@ function bower(options) {
 
 function addPlugin(c) {
   return c
+
     // package.json should take precedence over bower.json that's why package.json is defined first
     // @link https://github.com/webpack/webpack/issues/1042
+
     .setIn(
       ['plugins', 'bowerNpm'],
 
       new ResolverPlugin([
-         new ResolverPlugin.DirectoryDescriptionFilePlugin("package.json", ["main"])
-      ], ["normal", "loader"])
+         new ResolverPlugin.DirectoryDescriptionFilePlugin('package.json', ['main'])
+      ], ['normal', 'loader'])
     )
     .setIn(
       ['plugins', 'bower'],
 
       new ResolverPlugin([
-         new ResolverPlugin.DirectoryDescriptionFilePlugin("bower.json", ["main"])
-      ], ["normal", "loader"])
+         new ResolverPlugin.DirectoryDescriptionFilePlugin('bower.json', ['main'])
+      ], ['normal', 'loader'])
     );
 }

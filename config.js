@@ -39,7 +39,7 @@ const config = Config({
         './src/styles/app.foundation.style.scss',
         './src/styles/app.global.style.scss']
     },
-    devtool: env.development ? '#cheap-eval-inline-source-map' : undefined,
+    devtool: env.development ? '#cheap-eval-module-inline-source-map' : undefined,
     resolve: {
       root: [path.resolve(__dirname, 'src')],
       modulesDirectories: [
@@ -104,10 +104,23 @@ console.log(util.inspect(_config, {depth: 3, colors: true}));
 export default _config;
 
 function getEnv() {
-  return {
-    production: process.env.NODE_ENV === 'production',
-    development: process.env.NODE_ENV === 'development'
-  };
+  switch (process.env.NODE_ENV) {
+    case 'development':
+      return {
+        development: true,
+        production: false,
+      };
+    case 'production':
+      return {
+        production: true,
+        development: false,
+      };
+    default:
+      return {
+        production: true,
+        development: false,
+      };
+  }
 }
 
 // app specific style config
