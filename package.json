@@ -47,6 +47,7 @@
     "node-sass": "^3.4.2",
     "postcss-loader": "^0.8.0",
     "proxy-middleware": "^0.15.0",
+    "redux": "^3.3.1",
     "redux-logger": "^2.6.0",
     "redux-thunk": "^1.0.3",
     "redux-ui-router": "^0.5.1",
@@ -56,8 +57,7 @@
     "style-loader": "^0.13.0",
     "url": "^0.11.0",
     "url-loader": "^0.5.7",
-    "webpack": "^1.12.13",
-    "webpack-config-builder": "ssh+git@bitbucket.org:tijhaart/webpack-config-builder.git#0.0.2",
+    "webpack-config-builder": "ssh+git@bitbucket.org:tijhaart/webpack-config-builder.git#0.0.3",
     "webpack-dev-middleware": "^1.5.1",
     "webpack-dev-server": "^1.14.1",
     "webpack-hot-middleware": "^2.7.1",
@@ -71,6 +71,7 @@
     "jshint-loader": "^0.8.3",
     "raw-loader": "^0.5.1",
     "watch-run": "^1.2.4",
+    "webpack": "^1.12.14",
     "webpack-bundle-tracker": "0.0.93"
   }
 }
