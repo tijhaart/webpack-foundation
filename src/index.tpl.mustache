@@ -6,6 +6,8 @@
 
     <title>Webpack foundation</title>
 
+    <link href='https://fonts.googleapis.com/css?family=Roboto:400,700,300,400italic' rel='stylesheet' type='text/css'>
+
     ${#env.production}
     <link rel="stylesheet" href="${ publicPath }css/vendor.css">
     <link rel="stylesheet" href="${ publicPath }css/app.css">
@@ -19,7 +21,9 @@
   </head>
   <body>
 
-    <counter></counter>
+    <!-- <main ui-view="main"></main> -->
+
+    <todo-app></todo-app>
 
   </body>
 </html>
