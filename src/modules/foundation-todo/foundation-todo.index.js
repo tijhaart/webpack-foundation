@@ -4,12 +4,45 @@ import thunk from 'redux-thunk';
 import ngRedux from 'ng-redux';
 import reduxLogger from 'redux-logger';
 import _ from 'lodash';
+import u from 'updeep';
+import classNames from 'classnames';
+
+import './todo-item.local.style.scss';
+
+function todoItemReducer(item, { type, payload }) {
+  switch (type) {
+    case 'TODO_ITEM_TOGGLE_COMPLETED':
+      if (item.id !== payload.id) {
+        return item;
+      }
+
+      return u({
+        completed: !item.completed
+      }, item);
+
+    case 'ADD_TODO_ITEM':
+      return u(payload, {
+        id: null,
+        title: null,
+        completed: false
+      });
+  }
+
+  return item;
+}
 
 function todoItemsReducer(items=[], action={}) {
-
   switch (action.type) {
     case 'GET_TODO_ITEMS_DONE':
       return action.payload;
+
+    // @TODO use normalizr to prevent loops for updating just a single item
+    // @link https://github.com/gaearon/normalizr
+    case 'TODO_ITEM_TOGGLE_COMPLETED':
+      return u.map((x) => todoItemReducer(x, action), items);
+
+    case 'ADD_TODO_ITEM':
+      return [].concat(items, [todoItemReducer(void(0), action)]);
   }
 
   return items;
@@ -52,9 +85,11 @@ export default angular
     const todoItems = [
       { title: 'Add support for large icon buttons with an icon button component', completed: false },
       { title: 'Create a complete todo app', completed: true },
-      { title: 'Add support for (mocha) tests' },
-      { title: 'Refactor todoApp' },
-      { title: 'Split components into seperate component files' }
+      { title: 'Add support for (mocha) tests', completed: false },
+      { title: 'Refactor todoApp', completed: false },
+      { title: 'Split components into seperate component files', completed: false },
+      { title: 'Use normalizr to manage entities like todo items', completed: false },
+      { title: 'Fgure out how to use RxJS with angular for input events (e.g. key events)', completed: false },
     ].map((item, index) => {
       item.id = _.uniqueId();
       item.createdAt = new Date(Date.now() + (index * 1000)).toISOString();
@@ -75,15 +110,88 @@ export default angular
             type: 'GET_TODO_ITEMS_DONE',
             payload: todoItems
           });
-        }, 2000);
+        }, 100);
       };
     }
   })
   .component('todoApp', {
     templateUrl: require('./todo-app.ngtpl.html')
   })
+  /**
+   * Features:
+   * - add new todo item via:
+   *   - enter keypress
+   *   - 'Add' button
+   * - clear input field when text is entered
+   */
   .component('todoEditor', {
-    templateUrl: require('./todo-app.todo-editor.ngtpl.html')
+    templateUrl: require('./todo-app.todo-editor.ngtpl.html'),
+    controller($ngRedux) {
+      'ngInject';
+      const ctrl = this;
+
+      /**
+       * mutableItem.title {String}
+       */
+      ctrl.mutableItem = {};
+
+      ctrl.addTodo = (item) => {
+        // ActionCreator side effect
+        let nextItem = u(u._, {
+          id: _.uniqueId(`$$TodoItem__${_.random()}`),
+          title: null,
+          completed: false
+        });
+
+        item = nextItem(item);
+
+        $ngRedux.dispatch({
+          type: 'ADD_TODO_ITEM',
+          payload: item
+        });
+      }
+
+      ctrl.submit = () => {
+        if (ctrl.todoItemForm.$invalid) {
+          return;
+        }
+
+        ctrl.addTodo(ctrl.mutableItem);
+        ctrl.reset();
+      }
+
+      ctrl.reset = () => {
+        ctrl.mutableItem = {};
+      }
+
+      // RxJS shines here very well
+      // @TODO figure out how to use RxJS with angular
+      ctrl.onTitleInputKeyEvent = ({ which: keyCode }) => {
+        switch (keyCode) {
+          // 13: Enter
+          case 13:
+            ctrl.submit();
+            break;
+
+          // 13: Esc
+          case 27:
+            ctrl.reset();
+            break;
+          default:
+            return;
+        }
+      };
+
+      ctrl.classList = {};
+
+      Object.defineProperty(ctrl.classList, 'submitBtn', {
+        get() {
+          return classNames({
+            disabled: ctrl.todoItemForm.$invalid || ctrl.todoItemForm.$pristine
+          });
+        }
+      });
+    }
   })
   .component('todoListContainer', {
     template:`
@@ -118,7 +226,17 @@ export default angular
     bindings: {
       item: '<'
     },
-    controller() {},
+    controller($ngRedux) {
+      'ngInject';
+      const ctrl = this;
+
+      ctrl.toggleCompleted = () => {
+        $ngRedux.dispatch({
+          type: 'TODO_ITEM_TOGGLE_COMPLETED',
+          payload: ctrl.item
+        });
+      };
+    },
     controllerAs: 'ctrl',
     templateUrl: require('./todo-app.todo-item.ngtpl.html')
   })

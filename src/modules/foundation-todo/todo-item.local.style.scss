@@ -1,0 +1,10 @@
+.todoItem {
+  &__title {
+    transition: color .3s ease;
+
+    &._is_completed {
+      text-decoration: line-through;
+      color: #666;
+    }
+  }
+}

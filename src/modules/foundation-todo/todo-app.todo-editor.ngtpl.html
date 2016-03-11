@@ -1,17 +1,25 @@
 <!-- TodoEditor -->
 <div todo-editor>
-  <div>
+  <form novalidate name="$ctrl.todoItemForm">
     <div class="input-group">
       <input
+        ng-required="true"
+        ng-maxlength="254"
+        ng-minlength="1"
+        ng-keyup="$ctrl.onTitleInputKeyEvent($event)"
+        ng-keypress="$ctrl.onTitleInputKeyEvent($event)"
+        ng-model="$ctrl.mutableItem.title"
         class="input-group-field"
         type="text"
         placeholder="What to get done?">
 
       <a
+        ng-click="$ctrl.submit()"
+        ng-class="$ctrl.classList.submitBtn"
         class="button input-group-button"
         href="#">
         Add
       </a>
     </div>
-  </div>
+  </form>
 </div>

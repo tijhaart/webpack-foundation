@@ -3,13 +3,17 @@
   <div class="row align-middle">
     <div class="shrink columns">
       <a
+        ng-click="ctrl.toggleCompleted()"
         href="#"
         ng-style="{opacity: ctrl.item.completed ? 1 : 0.5}"
         class="button hollow"><i class="fi-check large"></i></a>
     </div>
 
     <div class="columns">
-      <h4 class="todoItem__title" ng-bind="ctrl.item.title"></h4>
+      <h4
+        ng-class="{ '_is_completed': ctrl.item.completed }"
+        class="todoItem__title"
+        ng-bind="ctrl.item.title"></h4>
     </div>
   </div>
 </div>
