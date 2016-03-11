@@ -8,6 +8,7 @@ import u from 'updeep';
 import classNames from 'classnames';
 
 import './todo-item.local.style.scss';
+import './todo-editor.local.style.scss';
 
 function todoItemReducer(item, { type, payload }) {
   switch (type) {
@@ -20,7 +21,7 @@ function todoItemReducer(item, { type, payload }) {
         completed: !item.completed
       }, item);
 
-    case 'ADD_TODO_ITEM':
+    case 'TODO_ITEM_ADDED':
       return u(payload, {
         id: null,
         title: null,
@@ -41,8 +42,8 @@ function todoItemsReducer(items=[], action={}) {
     case 'TODO_ITEM_TOGGLE_COMPLETED':
       return u.map((x) => todoItemReducer(x, action), items);
 
-    case 'ADD_TODO_ITEM':
-      return [].concat(items, [todoItemReducer(void(0), action)]);
+    case 'TODO_ITEM_ADDED':
+      return [].concat([todoItemReducer(void(0), action)], items);
   }
 
   return items;
@@ -83,13 +84,26 @@ export default angular
     'ngInject';
 
     const todoItems = [
+      { title: 'Add new todo item', completed: true },
+      { title: 'Prevent adding new todo when input field is empty', completed: true },
+      { title: 'Disable "Add" button when input is invalid', completed: true },
+      { title: 'Add new todo by pressing ENTER', completed: true },
+      { title: 'Clear todo item input field by pressing ESC', completed: true },
+      { title: 'Clear todo item input field by clicking the "clear" button', completed: true },
+      { title: 'Add new todo items on top of the list (order by createdAt)', completed: false },
+      { title: 'Remove todo item', completed: false },
+      { title: 'Edit todo item title', completed: false },
       { title: 'Add support for large icon buttons with an icon button component', completed: false },
-      { title: 'Create a complete todo app', completed: true },
+      { title: 'Create a complete todo app', completed: false },
+      { title: 'Display a message when a todo was added', completed: false },
       { title: 'Add support for (mocha) tests', completed: false },
       { title: 'Refactor todoApp', completed: false },
       { title: 'Split components into seperate component files', completed: false },
       { title: 'Use normalizr to manage entities like todo items', completed: false },
       { title: 'Fgure out how to use RxJS with angular for input events (e.g. key events)', completed: false },
+      { title: 'Use a remote api that serves fake (generated) data using json-schema-faker', completed: false },
+      { title: 'Persist changes to the todo items', completed: false },
+      { title: 'Group list into uncompleted and completed', completed: false },
     ].map((item, index) => {
       item.id = _.uniqueId();
       item.createdAt = new Date(Date.now() + (index * 1000)).toISOString();
@@ -140,13 +154,14 @@ export default angular
         let nextItem = u(u._, {
           id: _.uniqueId(`$$TodoItem__${_.random()}`),
           title: null,
-          completed: false
+          completed: false,
+          createdAt: new Date().toISOString()
         });
 
         item = nextItem(item);
 
         $ngRedux.dispatch({
-          type: 'ADD_TODO_ITEM',
+          type: 'TODO_ITEM_ADDED',
           payload: item
         });
       }
@@ -167,19 +182,15 @@ export default angular
       // RxJS shines here very well
       // @TODO figure out how to use RxJS with angular
       ctrl.onTitleInputKeyEvent = ({ which: keyCode }) => {
-        switch (keyCode) {
+        const actions = {
           // 13: Enter
-          case 13:
-            ctrl.submit();
-            break;
-
+          13: ctrl.submit,
           // 13: Esc
-          case 27:
-            ctrl.reset();
-            break;
-          default:
-            return;
-        }
+          27: ctrl.reset
+        };
+
+        const action = actions[keyCode];
+        action && action();
       };
 
       ctrl.classList = {};
@@ -188,6 +199,14 @@ export default angular
         get() {
           return classNames({
             disabled: ctrl.todoItemForm.$invalid || ctrl.todoItemForm.$pristine
+          });
+        }
+      });
+
+      Object.defineProperty(ctrl.classList, 'clearBtn', {
+        get() {
+          return classNames({
+            disabled: ctrl.todoItemForm.$pristine || _.isEmpty(ctrl.mutableItem.title)
           });
         }
       });

@@ -14,6 +14,13 @@
         placeholder="What to get done?">
 
       <a
+        ng-click="$ctrl.reset()"
+        ng-class="$ctrl.classList.clearBtn"
+        class="todoEditor__clearBtn button input-group-button fi-x"
+        href="#">
+      </a>
+
+      <a
         ng-click="$ctrl.submit()"
         ng-class="$ctrl.classList.submitBtn"
         class="button input-group-button"
