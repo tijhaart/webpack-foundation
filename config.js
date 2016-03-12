@@ -87,7 +87,7 @@ const config = Config({
   .use(devServer({
       contentBase: path.resolve('./dist'),
       publicPath: '/static/',
-      host: 'localhost',
+      host: '0.0.0.0',
       port: 9090,
       hot: env.development
     }, {
