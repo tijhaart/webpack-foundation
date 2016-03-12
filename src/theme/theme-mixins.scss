@@ -1,0 +1,9 @@
+@import "~foundation-sites/scss/foundation";
+
+@function theme-color($id: primary, $colors:null) {
+  @if not($colors) {
+    $colors: $foundation-palette;
+  }
+
+  @return map-get($colors, $id);
+}
