@@ -1,4 +1,20 @@
 .todoItem {
+  .checkBtn__icon {
+    transition: color .3s ease;
+    color: transparent;
+    transform: scale(1);
+  }
+
+  &__checkBtn {
+    &._is_completed {
+      opacity: 0.5;
+
+      .checkBtn__icon {
+        color: inherit;
+      }
+    }
+  }
+
   &__title {
     transition: color .3s ease;
 

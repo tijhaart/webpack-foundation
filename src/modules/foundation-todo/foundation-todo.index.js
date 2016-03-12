@@ -21,7 +21,7 @@ function todoItemReducer(item, { type, payload }) {
         completed: !item.completed
       }, item);
 
-    case 'TODO_ITEM_ADDED':
+    case 'ADD_TODO_ITEM':
       return u(payload, {
         id: null,
         title: null,
@@ -42,8 +42,12 @@ function todoItemsReducer(items=[], action={}) {
     case 'TODO_ITEM_TOGGLE_COMPLETED':
       return u.map((x) => todoItemReducer(x, action), items);
 
-    case 'TODO_ITEM_ADDED':
+    case 'ADD_TODO_ITEM':
       return [].concat([todoItemReducer(void(0), action)], items);
+
+    case 'TODO_ITEMS_ORDER_BY':
+      const { orderProp, order } = action.payload;
+      return _.orderBy(items, [orderProp], [order]);
   }
 
   return items;
@@ -60,6 +64,18 @@ function isFetchingItemsReducer(isFetching=true, { type }) {
   return isFetching;
 }
 
+function todoItemsOrdering(ordering = { orderProp: 'createdAt', order: 'asc' }, { type, payload }) {
+  switch (type) {
+    case 'TODO_ITEMS_ORDER_BY':
+      return u({
+        orderProp: payload.orderProp,
+        order: payload.order,
+      }, ordering);
+  }
+
+  return ordering;
+}
+
 export default angular
   .module('foundationTodo', [
     ngRedux
@@ -69,14 +85,17 @@ export default angular
 
     const reducer = combineReducers({
       isFetchingItems: isFetchingItemsReducer,
-      todoItems: todoItemsReducer
+      todoItems: todoItemsReducer,
+      todoItemsOrdering: todoItemsOrdering,
     });
 
     $ngReduxProvider.createStoreWith(
       reducer,
       [
         thunk,
-        reduxLogger(),
+        reduxLogger({
+          collapsed: true
+        }),
       ]
     );
   })
@@ -110,9 +129,18 @@ export default angular
       return item;
     });
 
-    $ngRedux.dispatch(fetchTodoItems());
+    // add todo -> apply active ordering -> render
 
-    function fetchTodoItems(query={ limit:10, offset:0 }) {
+    $ngRedux.dispatch(fetchTodoItems({order: 'desc'}));
+
+    function fetchTodoItems(query={}) {
+      query = u(query, {
+        limit: 10,
+        offset: 0,
+        orderProp: 'createdAt',
+        order: 'asc'
+      });
+
       return (dispatch) => {
         dispatch({
           type: 'GET_TODO_ITEMS_PENDING',
@@ -120,9 +148,21 @@ export default angular
         });
 
         setTimeout(() => {
+          const { orderProp, order, offset, limit } = query;
+          // todoItemsOrdered simulates the ordered, queried, result from a remote source
+          const todoItemsOrdered = _.orderBy(todoItems, [orderProp], [order]).slice(
+            offset,
+            limit
+          );
+
           dispatch({
             type: 'GET_TODO_ITEMS_DONE',
-            payload: todoItems
+            payload: todoItemsOrdered,
+          });
+
+          dispatch({
+            type: 'TODO_ITEMS_ORDER_BY',
+            payload: { orderProp, order }
           });
         }, 100);
       };
@@ -158,13 +198,30 @@ export default angular
           createdAt: new Date().toISOString()
         });
 
+        const { todoItemsOrdering } = $ngRedux.getState();
+
         item = nextItem(item);
 
         $ngRedux.dispatch({
-          type: 'TODO_ITEM_ADDED',
+          type: 'ADD_TODO_ITEM',
           payload: item
         });
-      }
+
+        const { orderProp, order } = todoItemsOrdering;
+        $ngRedux.dispatch({
+          type: 'TODO_ITEMS_ORDER_BY',
+          payload: { orderProp, order }
+        });
+      };
+
+      setTimeout(() => {
+        ctrl.addTodo({
+          id: 999,
+          title: 'Delayed automatically added todo item',
+          completed: false,
+          createdAt: new Date().toISOString(),
+        });
+      }, 1000);
 
       ctrl.submit = () => {
         if (ctrl.todoItemForm.$invalid) {
@@ -196,19 +253,15 @@ export default angular
       ctrl.classList = {};
 
       Object.defineProperty(ctrl.classList, 'submitBtn', {
-        get() {
-          return classNames({
-            disabled: ctrl.todoItemForm.$invalid || ctrl.todoItemForm.$pristine
-          });
-        }
+        get: () => classNames({
+          disabled: ctrl.todoItemForm.$invalid || ctrl.todoItemForm.$pristine
+        })
       });
 
       Object.defineProperty(ctrl.classList, 'clearBtn', {
-        get() {
-          return classNames({
-            disabled: ctrl.todoItemForm.$pristine || _.isEmpty(ctrl.mutableItem.title)
-          });
-        }
+        get: () => classNames({
+          disabled: ctrl.todoItemForm.$pristine || _.isEmpty(ctrl.mutableItem.title)
+        })
       });
     }
   })
@@ -249,12 +302,17 @@ export default angular
       'ngInject';
       const ctrl = this;
 
-      ctrl.toggleCompleted = () => {
+      ctrl.toggleCompleted = (event) => {
+        event.preventDefault();
+        toggleCompleted();
+      };
+
+      function toggleCompleted() {
         $ngRedux.dispatch({
           type: 'TODO_ITEM_TOGGLE_COMPLETED',
           payload: ctrl.item
         });
-      };
+      }
     },
     controllerAs: 'ctrl',
     templateUrl: require('./todo-app.todo-item.ngtpl.html')
