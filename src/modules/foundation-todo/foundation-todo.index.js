@@ -53,7 +53,7 @@ function todoItemsReducer(items=[], action={}) {
   return items;
 }
 
-function isFetchingItemsReducer(isFetching=true, { type }) {
+function isFetchingItemsReducer(isFetching=false, { type }) {
   switch (type) {
     case 'GET_TODO_ITEMS_PENDING':
       return true;
@@ -64,7 +64,7 @@ function isFetchingItemsReducer(isFetching=true, { type }) {
   return isFetching;
 }
 
-function todoItemsOrdering(ordering = { orderProp: 'createdAt', order: 'asc' }, { type, payload }) {
+function todoItemsOrdering(ordering = { orderProp: 'createdAt', order: 'desc' }, { type, payload }) {
   switch (type) {
     case 'TODO_ITEMS_ORDER_BY':
       return u({
@@ -109,7 +109,7 @@ export default angular
       { title: 'Add new todo by pressing ENTER', completed: true },
       { title: 'Clear todo item input field by pressing ESC', completed: true },
       { title: 'Clear todo item input field by clicking the "clear" button', completed: true },
-      { title: 'Add new todo items on top of the list (order by createdAt)', completed: false },
+      { title: 'Add new todo items on top of the list (order by createdAt)', completed: true },
       { title: 'Remove todo item', completed: false },
       { title: 'Edit todo item title', completed: false },
       { title: 'Add support for large icon buttons with an icon button component', completed: false },
@@ -128,8 +128,6 @@ export default angular
       item.createdAt = new Date(Date.now() + (index * 1000)).toISOString();
       return item;
     });
-
-    // add todo -> apply active ordering -> render
 
     $ngRedux.dispatch(fetchTodoItems({order: 'desc'}));
 
@@ -159,11 +157,6 @@ export default angular
             type: 'GET_TODO_ITEMS_DONE',
             payload: todoItemsOrdered,
           });
-
-          dispatch({
-            type: 'TODO_ITEMS_ORDER_BY',
-            payload: { orderProp, order }
-          });
         }, 100);
       };
     }
@@ -171,13 +164,6 @@ export default angular
   .component('todoApp', {
     templateUrl: require('./todo-app.ngtpl.html')
   })
-  /**
-   * Features:
-   * - add new todo item via:
-   *   - enter keypress
-   *   - 'Add' button
-   * - clear input field when text is entered
-   */
   .component('todoEditor', {
     templateUrl: require('./todo-app.todo-editor.ngtpl.html'),
     controller($ngRedux) {

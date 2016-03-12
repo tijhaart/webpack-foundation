@@ -14,7 +14,7 @@
         ng-class="{ '_is_completed': ctrl.item.completed }"
         class="todoItem__title"
         ng-bind="ctrl.item.title"></h4>
-      <small ng-bind="ctrl.item.createdAt | date:'HH:MM:ss'"></small>
+      <small class="todoItem__createdAt" ng-bind="ctrl.item.createdAt | date:'EEE d MMM &mdash; HH:mm:ss'"></small>
     </div>
 
     <!-- <div class="columns small-2 end">

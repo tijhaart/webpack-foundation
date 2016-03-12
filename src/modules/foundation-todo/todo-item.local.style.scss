@@ -1,4 +1,8 @@
+@import "~theme/theme-mixins";
+
 .todoItem {
+  margin: .5rem 0;
+
   .checkBtn__icon {
     transition: color .3s ease;
     color: transparent;
@@ -6,6 +10,8 @@
   }
 
   &__checkBtn {
+    margin: 0;
+
     &._is_completed {
       opacity: 0.5;
 
@@ -17,10 +23,15 @@
 
   &__title {
     transition: color .3s ease;
+    margin: 0;
 
     &._is_completed {
       text-decoration: line-through;
       color: #666;
     }
+  }
+
+  &__createdAt {
+    color: theme-color(secondary);
   }
 }

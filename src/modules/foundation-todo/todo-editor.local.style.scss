@@ -1,5 +1,10 @@
 .todoEditor {
   &__clearBtn {
     border-right-color: #fff;
+    margin: 0;
+  }
+
+  &__submitBtn {
+    margin: 0;
   }
 }
