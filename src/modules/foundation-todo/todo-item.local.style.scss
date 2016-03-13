@@ -1,8 +1,28 @@
 @import "~theme/theme-mixins";
 
-.todoItem {
-  margin: .5rem 0;
+$ns: todoItem;
 
+.#{$ns} {
+  padding: .5rem 0;
+
+  &__title {
+    transition: color .3s ease;
+    margin: 0;
+
+    &._is_completed {
+      text-decoration: line-through;
+      color: #666;
+    }
+  }
+
+  &__createdAt {
+    color: theme-color(secondary);
+  }
+}
+
+// TodoItem controls
+
+.#{$ns} {
   .checkBtn__icon {
     transition: color .3s ease;
     color: transparent;
@@ -21,17 +41,14 @@
     }
   }
 
-  &__title {
-    transition: color .3s ease;
+  &__removeBtn {
     margin: 0;
-
-    &._is_completed {
-      text-decoration: line-through;
-      color: #666;
-    }
+    background-color: transparent;
+    color: theme-color();
   }
 
-  &__createdAt {
-    color: theme-color(secondary);
+  &__actionGroup {
+    margin-bottom: 0;
+    justify-content: flex-end;
   }
 }

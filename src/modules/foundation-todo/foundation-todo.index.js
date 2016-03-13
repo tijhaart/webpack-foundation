@@ -45,6 +45,10 @@ function todoItemsReducer(items=[], action={}) {
     case 'ADD_TODO_ITEM':
       return [].concat([todoItemReducer(void(0), action)], items);
 
+    case 'REMOVE_TODO_ITEM':
+      const itemId = action.payload;
+      return _.filter(items, x => x.id !== itemId);
+
     case 'TODO_ITEMS_ORDER_BY':
       const { orderProp, order } = action.payload;
       return _.orderBy(items, [orderProp], [order]);
@@ -110,7 +114,7 @@ export default angular
       { title: 'Clear todo item input field by pressing ESC', completed: true },
       { title: 'Clear todo item input field by clicking the "clear" button', completed: true },
       { title: 'Add new todo items on top of the list (order by createdAt)', completed: true },
-      { title: 'Remove todo item', completed: false },
+      { title: 'Remove todo item', completed: true },
       { title: 'Edit todo item title', completed: false },
       { title: 'Add support for large icon buttons with an icon button component', completed: false },
       { title: 'Create a complete todo app', completed: false },
@@ -123,6 +127,8 @@ export default angular
       { title: 'Use a remote api that serves fake (generated) data using json-schema-faker', completed: false },
       { title: 'Persist changes to the todo items', completed: false },
       { title: 'Group list into uncompleted and completed', completed: false },
+      { title: 'Research angularjs + redux + time travel', completed: false },
+      { title: 'Try out lodash/fp, because fp :P', completed: false },
     ].map((item, index) => {
       item.id = _.uniqueId();
       item.createdAt = new Date(Date.now() + (index * 1000)).toISOString();
@@ -254,6 +260,7 @@ export default angular
   .component('todoListContainer', {
     template:`
       <div class="callout" ng-if="ctrl.isFetchingItems">Loading items...</div>
+      <div class="callout" ng-if="ctrl.isTodoItemsEmptyAndNotFetching">Nothing to see here. Move along.</div>
       <todo-list ng-if="!ctrl.isFetchingItems" items="ctrl.items"></todo-list>
     `,
     controller($scope, $ngRedux) {
@@ -267,6 +274,8 @@ export default angular
         return {
           isFetchingItems: isFetchingItems,
           items: todoItems,
+          // @TODO How to move this to a reducer?
+          isTodoItemsEmptyAndNotFetching: !isFetchingItems && todoItems.length < 1,
         };
       }
     },
@@ -293,6 +302,15 @@ export default angular
         toggleCompleted();
       };
 
+      ctrl.remove = (event) => {
+        event.preventDefault();
+
+        $ngRedux.dispatch({
+          type: 'REMOVE_TODO_ITEM',
+          payload: ctrl.item.id
+        });
+      };
+
       function toggleCompleted() {
         $ngRedux.dispatch({
           type: 'TODO_ITEM_TOGGLE_COMPLETED',
@@ -300,7 +318,6 @@ export default angular
         });
       }
     },
-    controllerAs: 'ctrl',
     templateUrl: require('./todo-app.todo-item.ngtpl.html')
   })
 ;
