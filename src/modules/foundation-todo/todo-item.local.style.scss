@@ -5,9 +5,49 @@ $ns: todoItem;
 .#{$ns} {
   padding: .5rem 0;
 
-  &__title {
-    transition: color .3s ease;
+  &__body {
+    min-height: 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  &__titleInput {
     margin: 0;
+    resize: none;
+    padding: 0;
+    border: none;
+    box-shadow: none;
+    overflow: hidden;
+
+    &._is_completed {
+      text-decoration: inherit;
+    }
+
+    &:focus {
+      border: none;
+      box-shadow: none;
+    }
+  }
+
+  &__title {
+    position: relative;
+    font-size: 1.3rem;
+    transition: color .3s ease;
+
+    &:after {
+      transition: width .3s ease, background-color .3s ease;
+      content: "";
+      width: 0%;
+      height: 3px;
+      bottom: -0.5rem;
+      position: absolute;
+    }
+
+    &._is_editable:after {
+      width: 100%;
+      background-color: theme-color(primary);
+    }
 
     &._is_completed {
       text-decoration: line-through;
@@ -41,10 +81,18 @@ $ns: todoItem;
     }
   }
 
-  &__removeBtn {
+  @mixin actionBtn {
     margin: 0;
     background-color: transparent;
     color: theme-color();
+  }
+
+  &__removeBtn {
+    @include actionBtn;
+  }
+
+  &__toggleEditBtn {
+    @include actionBtn;
   }
 
   &__actionGroup {

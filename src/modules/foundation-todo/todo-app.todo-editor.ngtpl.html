@@ -1,19 +1,25 @@
 <!-- TodoEditor -->
-<div todo-editor>
+<div>
   <form novalidate name="$ctrl.todoItemForm">
     <div class="input-group">
-      <input
-        ng-required="true"
-        ng-maxlength="254"
-        ng-minlength="1"
-        ng-keyup="$ctrl.onTitleInputKeyEvent($event)"
-        ng-keypress="$ctrl.onTitleInputKeyEvent($event)"
-        ng-model="$ctrl.mutableItem.title"
-        class="input-group-field"
-        type="text"
-        placeholder="What to get done?">
+      <div
+        ng-class="{ '_is_editable': $ctrl.edit }"
+        class="input-group-field todoItem__title">
+        <textarea
+          class="todoItem__titleInput"
+          ng-class="{ '_is_editable': $ctrl.edit, '_is_completed': $ctrl.item.completed }"
+          ng-required="true"
+          ng-maxlength="254"
+          ng-minlength="1"
+          ng-keyup="$ctrl.onTitleInputKeyEvent($event)"
+          ng-model="$ctrl.mutableItem.title"
+          ng-keypress="$ctrl.onTitleInputKeyEvent($event)"
+          placeholder="{{ $ctrl.edit ? 'Edit item' : 'What to get done?' }}">
+        </textarea>
+      </div>
 
       <a
+        ng-if="!$ctrl.edit"
         ng-click="$ctrl.reset()"
         ng-class="$ctrl.classList.clearBtn"
         class="todoEditor__clearBtn button input-group-button fi-x"
@@ -21,6 +27,7 @@
       </a>
 
       <a
+        ng-if="!$ctrl.edit"
         ng-click="$ctrl.submit()"
         ng-class="$ctrl.classList.submitBtn"
         class="todoEditor__submitBtn button input-group-button"

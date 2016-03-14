@@ -166,11 +166,27 @@ export default angular
         }, 100);
       };
     }
+
+    setTimeout(() => {
+      $ngRedux.dispatch({
+        type: 'ADD_TODO_ITEM',
+        payload: {
+          id: _.uniqueId(`$$TodoItem__${_.random()}`),
+          title: 'Delayed automatically added todo item',
+          completed: false,
+          createdAt: new Date().toISOString(),
+        }
+      });
+    }, 1000);
   })
   .component('todoApp', {
     templateUrl: require('./todo-app.ngtpl.html')
   })
   .component('todoEditor', {
+    bindings: {
+      item: '<',
+      edit: '=',
+    },
     templateUrl: require('./todo-app.todo-editor.ngtpl.html'),
     controller($ngRedux) {
       'ngInject';
@@ -181,7 +197,11 @@ export default angular
        */
       ctrl.mutableItem = {};
 
-      ctrl.addTodo = (item) => {
+      if (ctrl.edit) {
+        ctrl.mutableItem = angular.copy(ctrl.item);
+      }
+
+      ctrl.saveTodo = (item) => {
         // ActionCreator side effect
         let nextItem = u(u._, {
           id: _.uniqueId(`$$TodoItem__${_.random()}`),
@@ -194,10 +214,17 @@ export default angular
 
         item = nextItem(item);
 
-        $ngRedux.dispatch({
-          type: 'ADD_TODO_ITEM',
-          payload: item
-        });
+        if (ctrl.edit) {
+          $ngRedux.dispatch({
+            type: 'SAVE_TODO_ITEM',
+            payload: item
+          });
+        } else {
+          $ngRedux.dispatch({
+            type: 'ADD_TODO_ITEM',
+            payload: item
+          });
+        }
 
         const { orderProp, order } = todoItemsOrdering;
         $ngRedux.dispatch({
@@ -206,26 +233,21 @@ export default angular
         });
       };
 
-      setTimeout(() => {
-        ctrl.addTodo({
-          id: 999,
-          title: 'Delayed automatically added todo item',
-          completed: false,
-          createdAt: new Date().toISOString(),
-        });
-      }, 1000);
-
       ctrl.submit = () => {
         if (ctrl.todoItemForm.$invalid) {
           return;
         }
 
-        ctrl.addTodo(ctrl.mutableItem);
+        ctrl.saveTodo(ctrl.mutableItem);
         ctrl.reset();
       }
 
       ctrl.reset = () => {
-        ctrl.mutableItem = {};
+        if (ctrl.edit) {
+          ctrl.mutableItem = angular.copy(ctrl.item);
+        } else {
+          ctrl.mutableItem = {};
+        }
       }
 
       // RxJS shines here very well
