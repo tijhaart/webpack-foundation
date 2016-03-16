@@ -6,6 +6,7 @@ import reduxLogger from 'redux-logger';
 import _ from 'lodash';
 import u from 'updeep';
 import classNames from 'classnames';
+import Rx from 'rx';
 
 import './todo-item.local.style.scss';
 import './todo-editor.local.style.scss';
@@ -188,9 +189,33 @@ export default angular
       edit: '=',
     },
     templateUrl: require('./todo-app.todo-editor.ngtpl.html'),
-    controller($ngRedux) {
+    controller($ngRedux, $element, $scope) {
       'ngInject';
       const ctrl = this;
+
+      ctrl.state = {
+        isFocused: false
+      };
+
+      const onInputFocus$ = Rx.Observable.fromEvent($element.find('input'), 'focus blur');
+
+      const unsubscribe = onInputFocus$
+        // @TODO Implement ctrl.setState
+        .map(({type}) => {
+          return u({
+            isFocused: type === 'focus'
+          }, ctrl.state);
+        })
+        .do((x) => {
+          ctrl.state = x;
+        })
+        .do(() => {
+          $scope.$digest();
+        })
+        .subscribe()
+      ;
+
+      $scope.$on('$destroy', unsubscribe);
 
       /**
        * mutableItem.title {String}

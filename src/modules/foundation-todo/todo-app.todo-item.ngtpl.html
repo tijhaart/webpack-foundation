@@ -10,11 +10,6 @@
     </div>
 
     <div class="columns todoItem__body">
-      <!-- <h4
-        ng-class="{ '_is_completed': $ctrl.item.completed }"
-        class="todoItem__title"
-        ng-bind="$ctrl.item.title">
-      </h4> -->
       <todo-editor edit="true" item="$ctrl.item"></todo-editor>
 
       <small class="todoItem__createdAt" ng-bind="$ctrl.item.createdAt | date:'EEE d MMM &mdash; HH:mm:ss'"></small>
