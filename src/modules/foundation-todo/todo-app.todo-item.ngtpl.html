@@ -10,22 +10,12 @@
     </div>
 
     <div class="columns todoItem__body">
-      <todo-editor edit="true" item="$ctrl.item"></todo-editor>
-
-      <small class="todoItem__createdAt" ng-bind="$ctrl.item.createdAt | date:'EEE d MMM &mdash; HH:mm:ss'"></small>
-    </div>
-
-    <div class="columns small-2">
-      <div class="todoItem__actionGroup button-group">
-        <a
-          ng-click="$ctrl.toggleEdit($event)"
-          class="todoItem__toggleEditBtn button fi-pencil">
-        </a>
-        <a
-          ng-click="$ctrl.remove($event)"
-          class="todoItem__removeBtn button fi-x">
-        </a>
-      </div>
+      <todo-editor
+        placeholder="'Edit title'"
+        is-new-item="false"
+        is-content-editable="false"
+        item="$ctrl.item">
+      </todo-editor>
     </div>
   </div>
 </div>

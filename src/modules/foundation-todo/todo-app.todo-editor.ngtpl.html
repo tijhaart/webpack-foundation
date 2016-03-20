@@ -3,24 +3,24 @@
   <form novalidate name="$ctrl.todoItemForm">
     <div
       class="input-group todoEditor__title"
-      ng-class="{ '_is_editable': $ctrl.edit, '_is_focused': $ctrl.state.isFocused }">
+      ng-class="{ '_is_editable': $ctrl.state.isContentEditable, '_is_focused': $ctrl.state.isFocused }">
 
       <input
+        autofocus
         class="input-group-field todoEditor__titleInput"
-        ng-class="{ '_is_editable': $ctrl.edit, '_is_completed': $ctrl.item.completed }"
+        ng-class="{ '_is_editable': $ctrl.state.isContentEditable, '_is_completed': $ctrl.item.completed }"
         ng-required="true"
         ng-maxlength="254"
         ng-minlength="1"
         ng-keyup="$ctrl.onTitleInputKeyEvent($event)"
         ng-model="$ctrl.mutableItem.title"
-        ng-keypress="$ctrl.onTitleInputKeyEvent($event)"
         type="text"
-        placeholder="{{ $ctrl.edit ? 'Edit item' : 'What to get done?' }}" />
+        placeholder="{{ $ctrl.placeholder }}" />
 
       <div class="input-group-button">
         <a
+          ng-if="$ctrl.state.isNewItem"
           title="Clear (Esc)"
-          ng-if="!$ctrl.edit"
           ng-click="$ctrl.reset()"
           ng-class="$ctrl.classList.clearBtn"
           class="todoEditor__clearBtn button input-group-button fi-x"
@@ -28,8 +28,17 @@
         </a>
 
         <a
+          ng-if="!$ctrl.state.isNewItem"
+          title="Remove"
+          ng-click="$ctrl.remove()"
+          ng-class="$ctrl.classList.removeBtn"
+          class="todoEditor__removeBtn button input-group-button fi-trash"
+          href="#">
+        </a>
+
+        <a
+          ng-if="$ctrl.state.isNewItem"
           title="Submit (Enter)"
-          ng-if="!$ctrl.edit"
           ng-click="$ctrl.submit()"
           ng-class="$ctrl.classList.submitBtn"
           class="todoEditor__submitBtn button input-group-button fi-plus"

@@ -11,10 +11,6 @@ $ns: todoItem;
     flex-direction: column;
     justify-content: center;
   }
-
-  &__createdAt {
-    color: theme-color(secondary);
-  }
 }
 
 // TodoItem controls
@@ -41,7 +37,7 @@ $ns: todoItem;
   @mixin actionBtn {
     margin: 0;
     background-color: transparent;
-    color: theme-color();
+    color: theme-color(primary);
   }
 
   &__removeBtn {

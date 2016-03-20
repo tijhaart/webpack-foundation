@@ -22,6 +22,13 @@ function todoItemReducer(item, { type, payload }) {
         completed: !item.completed
       }, item);
 
+    case 'SAVE_TODO_ITEM':
+      if (item.id !== payload.id) {
+        return item;
+      }
+
+      return u(payload, item);
+
     case 'ADD_TODO_ITEM':
       return u(payload, {
         id: null,
@@ -45,6 +52,9 @@ function todoItemsReducer(items=[], action={}) {
 
     case 'ADD_TODO_ITEM':
       return [].concat([todoItemReducer(void(0), action)], items);
+
+    case 'SAVE_TODO_ITEM':
+      return items.map(x => todoItemReducer(x, action));
 
     case 'REMOVE_TODO_ITEM':
       const itemId = action.payload;
@@ -186,7 +196,9 @@ export default angular
   .component('todoEditor', {
     bindings: {
       item: '<',
-      edit: '=',
+      isContentEditable: '<',
+      isNewItem: '<',
+      placeholder: '<',
     },
     templateUrl: require('./todo-app.todo-editor.ngtpl.html'),
     controller($ngRedux, $element, $scope) {
@@ -194,12 +206,14 @@ export default angular
       const ctrl = this;
 
       ctrl.state = {
-        isFocused: false
+        isContentEditable: !!ctrl.isContentEditable,
+        isNewItem: !!ctrl.isNewItem,
+        isFocused: false,
       };
 
       const onInputFocus$ = Rx.Observable.fromEvent($element.find('input'), 'focus blur');
 
-      const unsubscribe = onInputFocus$
+      const observer = onInputFocus$
         // @TODO Implement ctrl.setState
         .map(({type}) => {
           return u({
@@ -215,18 +229,15 @@ export default angular
         .subscribe()
       ;
 
-      $scope.$on('$destroy', unsubscribe);
+      $scope.$on('$destroy', observer.dispose.bind(observer));
 
       /**
        * mutableItem.title {String}
        */
-      ctrl.mutableItem = {};
-
-      if (ctrl.edit) {
-        ctrl.mutableItem = angular.copy(ctrl.item);
-      }
+      ctrl.mutableItem = angular.copy(ctrl.item || {});
 
       ctrl.saveTodo = (item) => {
+        console.trace(item.title);
         // ActionCreator side effect
         let nextItem = u(u._, {
           id: _.uniqueId(`$$TodoItem__${_.random()}`),
@@ -237,16 +248,14 @@ export default angular
 
         const { todoItemsOrdering } = $ngRedux.getState();
 
-        item = nextItem(item);
-
-        if (ctrl.edit) {
+        if (ctrl.isNewItem) {
           $ngRedux.dispatch({
-            type: 'SAVE_TODO_ITEM',
-            payload: item
+            type: 'ADD_TODO_ITEM',
+            payload: nextItem(item)
           });
         } else {
           $ngRedux.dispatch({
-            type: 'ADD_TODO_ITEM',
+            type: 'SAVE_TODO_ITEM',
             payload: item
           });
         }
@@ -260,6 +269,7 @@ export default angular
 
       ctrl.submit = () => {
         if (ctrl.todoItemForm.$invalid) {
+          // @TODO Inform user
           return;
         }
 
@@ -268,16 +278,19 @@ export default angular
       }
 
       ctrl.reset = () => {
-        if (ctrl.edit) {
-          ctrl.mutableItem = angular.copy(ctrl.item);
-        } else {
-          ctrl.mutableItem = {};
-        }
+        ctrl.mutableItem = angular.copy(ctrl.item || {});
       }
+
+      ctrl.remove = () => {
+        $ngRedux.dispatch({
+          type: 'REMOVE_TODO_ITEM',
+          payload: ctrl.mutableItem.id || ctrl.item.id,
+        });
+      };
 
       // RxJS shines here very well
       // @TODO figure out how to use RxJS with angular
-      ctrl.onTitleInputKeyEvent = ({ which: keyCode }) => {
+      ctrl.onTitleInputKeyEvent = ({ which: keyCode, type }) => {
         const actions = {
           // 13: Enter
           13: ctrl.submit,
@@ -293,13 +306,13 @@ export default angular
 
       Object.defineProperty(ctrl.classList, 'submitBtn', {
         get: () => classNames({
-          disabled: ctrl.todoItemForm.$invalid || ctrl.todoItemForm.$pristine
+          'disabled _is_disabled': ctrl.todoItemForm.$invalid || ctrl.todoItemForm.$pristine
         })
       });
 
       Object.defineProperty(ctrl.classList, 'clearBtn', {
         get: () => classNames({
-          disabled: ctrl.todoItemForm.$pristine || _.isEmpty(ctrl.mutableItem.title)
+          'disabled _is_disabled': ctrl.todoItemForm.$pristine || _.isEmpty(ctrl.mutableItem.title)
         })
       });
     }
