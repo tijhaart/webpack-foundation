@@ -11,6 +11,8 @@ import Rx from 'rx';
 import './todo-item.local.style.scss';
 import './todo-editor.local.style.scss';
 
+import {TodoListContainer} from 'components/todo';
+
 function todoItemReducer(item, { type, payload }) {
   switch (type) {
     case 'TODO_ITEM_TOGGLE_COMPLETED':
@@ -26,6 +28,8 @@ function todoItemReducer(item, { type, payload }) {
       if (item.id !== payload.id) {
         return item;
       }
+
+      console.log(item.title);
 
       return u(payload, item);
 
@@ -93,7 +97,8 @@ function todoItemsOrdering(ordering = { orderProp: 'createdAt', order: 'desc' },
 
 export default angular
   .module('foundationTodo', [
-    ngRedux
+    ngRedux,
+    TodoListContainer,
   ])
   .config(($ngReduxProvider) => {
     'ngInject';
@@ -142,7 +147,7 @@ export default angular
       { title: 'Try out lodash/fp, because fp :P', completed: false },
     ].map((item, index) => {
       item.id = _.uniqueId();
-      item.createdAt = new Date(Date.now() + (index * 1000)).toISOString();
+      item.createdAt = new Date(Date.now() - (index * 1000)).toISOString();
       return item;
     });
 
@@ -237,7 +242,6 @@ export default angular
       ctrl.mutableItem = angular.copy(ctrl.item || {});
 
       ctrl.saveTodo = (item) => {
-        console.trace(item.title);
         // ActionCreator side effect
         let nextItem = u(u._, {
           id: _.uniqueId(`$$TodoItem__${_.random()}`),
@@ -317,38 +321,36 @@ export default angular
       });
     }
   })
-  .component('todoListContainer', {
-    template:`
-      <div class="callout" ng-if="ctrl.isFetchingItems">Loading items...</div>
-      <div class="callout" ng-if="ctrl.isTodoItemsEmptyAndNotFetching">Nothing to see here. Move along.</div>
-      <todo-list ng-if="!ctrl.isFetchingItems" items="ctrl.items"></todo-list>
-    `,
-    controller($scope, $ngRedux) {
-      'ngInject';
-      let ctrl = this;
-
-      const unsubscribe = $ngRedux.connect(map, null)(ctrl);
-      $scope.$on('$destroy', unsubscribe);
-
-      function map({ todoItems, isFetchingItems }) {
-        return {
-          isFetchingItems: isFetchingItems,
-          items: todoItems,
-          // @TODO How to move this to a reducer?
-          isTodoItemsEmptyAndNotFetching: !isFetchingItems && todoItems.length < 1,
-        };
-      }
-    },
-    controllerAs: 'ctrl'
-  })
-  .component('todoList', {
-    bindings: {
-      items: '<'
-    },
-    controller() { },
-    controllerAs: 'ctrl',
-    templateUrl: require('./todo-app.todo-list.ngtpl.html')
-  })
+  // .component('todoListContainer', {
+  //   template:`
+  //     <div class="callout" ng-if="$ctrl.isFetchingItems">Loading items...</div>
+  //     <div class="callout" ng-if="$ctrl.isTodoItemsEmptyAndNotFetching">Nothing to see here. Move along.</div>
+  //     <todo-list ng-if="!$ctrl.isFetchingItems" items="ctrl.items"></todo-list>
+  //   `,
+  //   controller($scope, $ngRedux) {
+  //     'ngInject';
+  //     let ctrl = this;
+  //
+  //     const unsubscribe = $ngRedux.connect(map, null)(ctrl);
+  //     $scope.$on('$destroy', unsubscribe);
+  //
+  //     function map({ todoItems, isFetchingItems }) {
+  //       return {
+  //         isFetchingItems: isFetchingItems,
+  //         items: todoItems,
+  //         // @TODO How to move this to a reducer?
+  //         isTodoItemsEmptyAndNotFetching: !isFetchingItems && todoItems.length < 1,
+  //       };
+  //     }
+  //   }
+  // })
+  // .component('todoList', {
+  //   bindings: {
+  //     items: '<'
+  //   },
+  //   controller() { },
+  //   templateUrl: require('./todo-app.todo-list.ngtpl.html')
+  // })
   .component('todoItem', {
     bindings: {
       item: '<'
