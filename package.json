@@ -58,7 +58,6 @@
     "url-loader": "^0.5.7",
     "webpack-config-builder": "ssh+git@github.com:tijhaart/webpack-config-builder.git#0.0.3",
     "webpack-dev-middleware": "^1.5.1",
-    "webpack-dev-server": "^1.14.1",
     "wrap-loader": "^0.1.0",
     "autoprefixer-loader": "^3.2.0",
     "jscs": "^2.10.1",
