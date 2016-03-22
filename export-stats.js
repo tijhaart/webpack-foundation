@@ -8,5 +8,7 @@ let compiler = webpack(config);
 
 compiler.run((err, stats) => {
   console.log('Compile done. Error:', err);
-	!err && fs.writeFileSync(path.join(__dirname, '/stats.json'), JSON.stringify(stats.toJson()), 'utf8');
+  !err && fs.writeFileSync(
+    path.join(__dirname, '/webpack-bundle-stats.json'), JSON.stringify(stats.toJson()), 'utf8'
+  );
 });
