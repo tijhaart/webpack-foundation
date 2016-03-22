@@ -1,9 +1,21 @@
 @import "~foundation-sites/scss/foundation";
 
-@function theme-color($id: primary, $colors:null) {
-  @if not($colors) {
-    $colors: $foundation-palette;
-  }
+$foundation-palette: (
+  primary: #2199e8,
+  secondary: #777,
+  success: #3adb76,
+  warning: #ffae00,
+  alert: #ec5840,
+);
 
+$theme-palette: map-merge($foundation-palette, (
+  light-grey: #e6e6e6,
+  medium-grey: #cacaca,
+  white: #fefefe,
+  black: #0a0a0a,
+));
+
+
+@function theme-color($id: primary, $colors: $theme-palette) {
   @return map-get($colors, $id);
 }

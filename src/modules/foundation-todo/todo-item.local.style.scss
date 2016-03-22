@@ -5,18 +5,11 @@ $ns: todoItem;
 .#{$ns} {
   padding: .5rem 0;
 
-  &__title {
-    transition: color .3s ease;
-    margin: 0;
-
-    &._is_completed {
-      text-decoration: line-through;
-      color: #666;
-    }
-  }
-
-  &__createdAt {
-    color: theme-color(secondary);
+  &__body {
+    min-height: 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
 }
 
@@ -41,10 +34,18 @@ $ns: todoItem;
     }
   }
 
-  &__removeBtn {
+  @mixin actionBtn {
     margin: 0;
     background-color: transparent;
-    color: theme-color();
+    color: theme-color(primary);
+  }
+
+  &__removeBtn {
+    @include actionBtn;
+  }
+
+  &__toggleEditBtn {
+    @include actionBtn;
   }
 
   &__actionGroup {

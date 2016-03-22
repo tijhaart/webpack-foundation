@@ -6,9 +6,12 @@ import reduxLogger from 'redux-logger';
 import _ from 'lodash';
 import u from 'updeep';
 import classNames from 'classnames';
+import Rx from 'rx';
 
 import './todo-item.local.style.scss';
 import './todo-editor.local.style.scss';
+
+import {TodoListContainer} from 'components/todo';
 
 function todoItemReducer(item, { type, payload }) {
   switch (type) {
@@ -20,6 +23,15 @@ function todoItemReducer(item, { type, payload }) {
       return u({
         completed: !item.completed
       }, item);
+
+    case 'SAVE_TODO_ITEM':
+      if (item.id !== payload.id) {
+        return item;
+      }
+
+      console.log(item.title);
+
+      return u(payload, item);
 
     case 'ADD_TODO_ITEM':
       return u(payload, {
@@ -44,6 +56,9 @@ function todoItemsReducer(items=[], action={}) {
 
     case 'ADD_TODO_ITEM':
       return [].concat([todoItemReducer(void(0), action)], items);
+
+    case 'SAVE_TODO_ITEM':
+      return items.map(x => todoItemReducer(x, action));
 
     case 'REMOVE_TODO_ITEM':
       const itemId = action.payload;
@@ -82,7 +97,8 @@ function todoItemsOrdering(ordering = { orderProp: 'createdAt', order: 'desc' },
 
 export default angular
   .module('foundationTodo', [
-    ngRedux
+    ngRedux,
+    TodoListContainer,
   ])
   .config(($ngReduxProvider) => {
     'ngInject';
@@ -131,7 +147,7 @@ export default angular
       { title: 'Try out lodash/fp, because fp :P', completed: false },
     ].map((item, index) => {
       item.id = _.uniqueId();
-      item.createdAt = new Date(Date.now() + (index * 1000)).toISOString();
+      item.createdAt = new Date(Date.now() - (index * 1000)).toISOString();
       return item;
     });
 
@@ -166,22 +182,66 @@ export default angular
         }, 100);
       };
     }
+
+    setTimeout(() => {
+      $ngRedux.dispatch({
+        type: 'ADD_TODO_ITEM',
+        payload: {
+          id: _.uniqueId(`$$TodoItem__${_.random()}`),
+          title: 'Delayed automatically added todo item',
+          completed: false,
+          createdAt: new Date().toISOString(),
+        }
+      });
+    }, 1000);
   })
   .component('todoApp', {
     templateUrl: require('./todo-app.ngtpl.html')
   })
   .component('todoEditor', {
+    bindings: {
+      item: '<',
+      isContentEditable: '<',
+      isNewItem: '<',
+      placeholder: '<',
+    },
     templateUrl: require('./todo-app.todo-editor.ngtpl.html'),
-    controller($ngRedux) {
+    controller($ngRedux, $element, $scope) {
       'ngInject';
       const ctrl = this;
+
+      ctrl.state = {
+        isContentEditable: !!ctrl.isContentEditable,
+        isNewItem: !!ctrl.isNewItem,
+        isFocused: false,
+      };
+
+      const onInputFocus$ = Rx.Observable.fromEvent($element.find('input'), 'focus blur');
+
+      const observer = onInputFocus$
+        // @TODO Implement ctrl.setState
+        .map(({type}) => {
+          return u({
+            isFocused: type === 'focus'
+          }, ctrl.state);
+        })
+        .do((x) => {
+          ctrl.state = x;
+        })
+        .do(() => {
+          $scope.$digest();
+        })
+        .subscribe()
+      ;
+
+      $scope.$on('$destroy', observer.dispose.bind(observer));
 
       /**
        * mutableItem.title {String}
        */
-      ctrl.mutableItem = {};
+      ctrl.mutableItem = angular.copy(ctrl.item || {});
 
-      ctrl.addTodo = (item) => {
+      ctrl.saveTodo = (item) => {
         // ActionCreator side effect
         let nextItem = u(u._, {
           id: _.uniqueId(`$$TodoItem__${_.random()}`),
@@ -192,12 +252,17 @@ export default angular
 
         const { todoItemsOrdering } = $ngRedux.getState();
 
-        item = nextItem(item);
-
-        $ngRedux.dispatch({
-          type: 'ADD_TODO_ITEM',
-          payload: item
-        });
+        if (ctrl.isNewItem) {
+          $ngRedux.dispatch({
+            type: 'ADD_TODO_ITEM',
+            payload: nextItem(item)
+          });
+        } else {
+          $ngRedux.dispatch({
+            type: 'SAVE_TODO_ITEM',
+            payload: item
+          });
+        }
 
         const { orderProp, order } = todoItemsOrdering;
         $ngRedux.dispatch({
@@ -206,31 +271,30 @@ export default angular
         });
       };
 
-      setTimeout(() => {
-        ctrl.addTodo({
-          id: 999,
-          title: 'Delayed automatically added todo item',
-          completed: false,
-          createdAt: new Date().toISOString(),
-        });
-      }, 1000);
-
       ctrl.submit = () => {
         if (ctrl.todoItemForm.$invalid) {
+          // @TODO Inform user
           return;
         }
 
-        ctrl.addTodo(ctrl.mutableItem);
+        ctrl.saveTodo(ctrl.mutableItem);
         ctrl.reset();
       }
 
       ctrl.reset = () => {
-        ctrl.mutableItem = {};
+        ctrl.mutableItem = angular.copy(ctrl.item || {});
       }
+
+      ctrl.remove = () => {
+        $ngRedux.dispatch({
+          type: 'REMOVE_TODO_ITEM',
+          payload: ctrl.mutableItem.id || ctrl.item.id,
+        });
+      };
 
       // RxJS shines here very well
       // @TODO figure out how to use RxJS with angular
-      ctrl.onTitleInputKeyEvent = ({ which: keyCode }) => {
+      ctrl.onTitleInputKeyEvent = ({ which: keyCode, type }) => {
         const actions = {
           // 13: Enter
           13: ctrl.submit,
@@ -246,49 +310,47 @@ export default angular
 
       Object.defineProperty(ctrl.classList, 'submitBtn', {
         get: () => classNames({
-          disabled: ctrl.todoItemForm.$invalid || ctrl.todoItemForm.$pristine
+          'disabled _is_disabled': ctrl.todoItemForm.$invalid || ctrl.todoItemForm.$pristine
         })
       });
 
       Object.defineProperty(ctrl.classList, 'clearBtn', {
         get: () => classNames({
-          disabled: ctrl.todoItemForm.$pristine || _.isEmpty(ctrl.mutableItem.title)
+          'disabled _is_disabled': ctrl.todoItemForm.$pristine || _.isEmpty(ctrl.mutableItem.title)
         })
       });
     }
   })
-  .component('todoListContainer', {
-    template:`
-      <div class="callout" ng-if="ctrl.isFetchingItems">Loading items...</div>
-      <div class="callout" ng-if="ctrl.isTodoItemsEmptyAndNotFetching">Nothing to see here. Move along.</div>
-      <todo-list ng-if="!ctrl.isFetchingItems" items="ctrl.items"></todo-list>
-    `,
-    controller($scope, $ngRedux) {
-      'ngInject';
-      let ctrl = this;
-
-      const unsubscribe = $ngRedux.connect(map, null)(ctrl);
-      $scope.$on('$destroy', unsubscribe);
-
-      function map({ todoItems, isFetchingItems }) {
-        return {
-          isFetchingItems: isFetchingItems,
-          items: todoItems,
-          // @TODO How to move this to a reducer?
-          isTodoItemsEmptyAndNotFetching: !isFetchingItems && todoItems.length < 1,
-        };
-      }
-    },
-    controllerAs: 'ctrl'
-  })
-  .component('todoList', {
-    bindings: {
-      items: '<'
-    },
-    controller() { },
-    controllerAs: 'ctrl',
-    templateUrl: require('./todo-app.todo-list.ngtpl.html')
-  })
+  // .component('todoListContainer', {
+  //   template:`
+  //     <div class="callout" ng-if="$ctrl.isFetchingItems">Loading items...</div>
+  //     <div class="callout" ng-if="$ctrl.isTodoItemsEmptyAndNotFetching">Nothing to see here. Move along.</div>
+  //     <todo-list ng-if="!$ctrl.isFetchingItems" items="ctrl.items"></todo-list>
+  //   `,
+  //   controller($scope, $ngRedux) {
+  //     'ngInject';
+  //     let ctrl = this;
+  //
+  //     const unsubscribe = $ngRedux.connect(map, null)(ctrl);
+  //     $scope.$on('$destroy', unsubscribe);
+  //
+  //     function map({ todoItems, isFetchingItems }) {
+  //       return {
+  //         isFetchingItems: isFetchingItems,
+  //         items: todoItems,
+  //         // @TODO How to move this to a reducer?
+  //         isTodoItemsEmptyAndNotFetching: !isFetchingItems && todoItems.length < 1,
+  //       };
+  //     }
+  //   }
+  // })
+  // .component('todoList', {
+  //   bindings: {
+  //     items: '<'
+  //   },
+  //   controller() { },
+  //   templateUrl: require('./todo-app.todo-list.ngtpl.html')
+  // })
   .component('todoItem', {
     bindings: {
       item: '<'

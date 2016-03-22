@@ -1,0 +1,16 @@
+<div
+  class="callout"
+  ng-if="$ctrl.isFetchingItems">
+  Loading items...
+</div>
+
+<div
+  class="callout"
+  ng-if="$ctrl.isTodoItemsEmptyAndNotFetching">
+  Nothing to see here. Move along.
+</div>
+
+<todo-list
+  ng-if="!$ctrl.isFetchingItems"
+  items="$ctrl.items">
+</todo-list>

@@ -9,21 +9,13 @@
         class="todoItem__checkBtn button hollow"><i class="checkBtn__icon fi-check large"></i></a>
     </div>
 
-    <div class="columns">
-      <h4
-        ng-class="{ '_is_completed': $ctrl.item.completed }"
-        class="todoItem__title"
-        ng-bind="$ctrl.item.title"></h4>
-      <small class="todoItem__createdAt" ng-bind="$ctrl.item.createdAt | date:'EEE d MMM &mdash; HH:mm:ss'"></small>
-    </div>
-
-    <div class="columns small-2">
-      <div class="todoItem__actionGroup button-group">
-        <a
-          ng-click="$ctrl.remove($event)"
-          class="todoItem__removeBtn button fi-x">
-        </a>
-      </div>
+    <div class="columns todoItem__body">
+      <todo-editor
+        placeholder="'Edit title'"
+        is-new-item="false"
+        is-content-editable="false"
+        item="$ctrl.item">
+      </todo-editor>
     </div>
   </div>
 </div>
