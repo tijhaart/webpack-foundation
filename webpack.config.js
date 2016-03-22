@@ -1,4 +1,2 @@
-require('babel-register')({
-  'presets': ['es2015']
-});
+require('babel-register');
 module.exports = require('./config.js');
