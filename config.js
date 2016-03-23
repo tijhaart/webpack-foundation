@@ -98,7 +98,6 @@ const config = Config({
 ;
 
 let _config = config.toJs();
-// console.log(util.inspect(_config.module.loaders, {depth: 3, colors: true}));
 console.log(util.inspect(_config, {depth: 3, colors: true}));
 
 export default _config;
