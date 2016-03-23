@@ -59,4 +59,14 @@
   &__submitBtn {
     color: theme-color(primary);
   }
+
+  &__removeBtn {
+    opacity: 1;
+    transition: opacity .3s ease;
+
+    &._is_hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+  }
 }
