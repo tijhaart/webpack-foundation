@@ -60,6 +60,11 @@
     color: theme-color(primary);
   }
 
+  &:hover &__removeBtn {
+    opacity: 1;
+    pointer-events: all;
+  }
+
   &__removeBtn {
     opacity: 1;
     transition: opacity .3s ease;
