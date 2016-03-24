@@ -1,0 +1,21 @@
+<!-- TodoItem -->
+<div todo-item class="todoItem">
+  <div class="row align-middle">
+    <div class="shrink columns">
+      <a
+        ng-click="$ctrl.toggleCompleted($event)"
+        href="#"
+        ng-class="{ '_is_completed': $ctrl.item.completed }"
+        class="todoItem__checkBtn button hollow"><i class="checkBtn__icon fi-check large"></i></a>
+    </div>
+
+    <div class="columns todoItem__body">
+      <todo-editor
+        placeholder="'Edit title'"
+        is-new-item="false"
+        is-content-editable="false"
+        item="$ctrl.item">
+      </todo-editor>
+    </div>
+  </div>
+</div>
