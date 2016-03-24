@@ -1,6 +1,10 @@
 @import "~foundation-sites/scss/foundation";
 @import "../theme/theme";
 
+body {
+  overflow-y: scroll;
+}
+
 h1 {
   color: $primary-color;
 }
