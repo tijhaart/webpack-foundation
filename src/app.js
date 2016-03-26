@@ -1,5 +1,5 @@
 import angular from 'angular';
-import foundationTodo from './modules/foundation-todo/foundation-todo.index';
+import foundationTodo from './apps/foundation-todo/foundation-todo.index';
 
 angular.element(document).ready(() => {
   'use strict';
