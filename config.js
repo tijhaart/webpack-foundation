@@ -165,7 +165,7 @@ function appStyle(config) {
   ;
 }
 
-/* @note hotReload requires some these as well, but hotReload is not used in production build */
+/* @note hotReload requires some of these as well, but hotReload is not used in production build */
 function optimizeBuild(c$) {
   return c$.map(c => (
     c.mergeIn(['plugins'], {
