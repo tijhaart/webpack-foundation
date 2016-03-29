@@ -1,7 +1,6 @@
 module.exports = template;
 
 /**
- * @TODO How to make this configurable from webpack config?
  * @note This function is run within the webpack context. Loaders will be applied on `require`.
  */
 function template(res, chunks, assets, compilation) {
