@@ -6,7 +6,7 @@ import {
   endRequestDone,
 } from 'apps/todo-data/todo-data.actions';
 
-import {getItems} from './data';
+import { getItems } from './data';
 
 const allItems = getItems();
 
