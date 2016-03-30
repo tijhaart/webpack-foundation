@@ -111,8 +111,7 @@ function _onTitleInputKeyEvent({ ctrl }, { which: keyCode, type }) {
   action && action.call(ctrl);
 }
 
- function _saveTodo({$ngRedux, ctrl }, item) {
-  // ActionCreator side effect
+ function _saveTodo({ $ngRedux, ctrl }, item) {
   let nextItem = u(u._, {
     id: _.uniqueId(`$$TodoItem__${_.random()}`),
     title: null,
@@ -120,7 +119,7 @@ function _onTitleInputKeyEvent({ ctrl }, { which: keyCode, type }) {
     createdAt: new Date().toISOString()
   });
 
-  const { todoItemsOrdering } = $ngRedux.getState();
+  const { ordering: todoItemsOrdering } = $ngRedux.getState().todos;
 
   if (ctrl.isNewItem) {
     $ngRedux.dispatch({

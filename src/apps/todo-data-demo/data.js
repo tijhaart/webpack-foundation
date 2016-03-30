@@ -24,6 +24,8 @@ const todoItems = [
   { title: 'Try out lodash/fp, because fp :P', completed: false },
   { title: 'Use nock to mock http requests', completed: false },
   { title: 'Research http middleware for processing http requests', completed: false },
+  { title: 'Research reselect', completed: false },
+  { title: 'Research multi transclusion in Angular 1.5', completed: false },
 ].map((item, index) => {
   item.id = _.uniqueId();
   item.createdAt = new Date(Date.now() - (index * 1000)).toISOString();

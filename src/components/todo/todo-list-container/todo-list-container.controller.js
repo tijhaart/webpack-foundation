@@ -12,11 +12,10 @@ export default class todoListContainerCtrl {
   }
 }
 
-function map({ todoItems, isFetchingItems }) {
+function map({ todos }) {
   return {
-    isFetchingItems: isFetchingItems,
-    items: todoItems,
-    // @TODO How to move this to a reducer?
-    isTodoItemsEmptyAndNotFetching: !isFetchingItems && todoItems.length < 1,
+    isFetchingItems: todos.isFetching,
+    items: todos.items,
+    isTodoItemsEmptyAndNotFetching: !todos.isFetching && todos.items.length < 1,
   };
 }
