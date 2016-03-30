@@ -12,9 +12,5 @@ function babel(options={}) {
     }
   });
 
-  return c$ => c$.map(c => {
-    return c.updateIn(['module.loaders', 'babel'], () => {
-      return options;
-    });
-  });
+  return c$ => c$.map(c => c.setIn(['module.loaders', 'babel'], options));
 }
