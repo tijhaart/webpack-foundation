@@ -1,8 +1,9 @@
 import u from 'updeep';
 import _ from 'lodash';
 import todoItemReducer, {
-  ADD_TODO_ITEM,
-  SAVE_TODO_ITEM,
+  ADD_TODO_ITEM_DONE,
+  SAVE_TODO_ITEM_DONE,
+  REMOVE_TODO_ITEM_DONE,
   TODO_ITEM_TOGGLE_COMPLETED,
 } from 'components/todo/todo-item/todo-item.redux';
 
@@ -26,13 +27,13 @@ function reducer(items=[], action={}) {
     case TODO_ITEM_TOGGLE_COMPLETED:
       return u.map((x) => todoItemReducer(x, action), items);
 
-    case ADD_TODO_ITEM:
+    case ADD_TODO_ITEM_DONE:
       return [].concat([todoItemReducer(void(0), action)], items);
 
-    case SAVE_TODO_ITEM:
+    case SAVE_TODO_ITEM_DONE:
       return items.map(x => todoItemReducer(x, action));
 
-    case REMOVE_TODO_ITEM:
+    case REMOVE_TODO_ITEM_DONE:
       const itemId = action.payload;
       return _.filter(items, x => x.id !== itemId);
   }

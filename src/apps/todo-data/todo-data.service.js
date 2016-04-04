@@ -4,7 +4,9 @@ import {
   fetchTodoItems
 } from './todo-data.actions';
 import {
-  add as addItem
+  add as addItem,
+  save as saveItem,
+  remove as removeItem
 } from 'components/todo/todo-item/todo-item.redux';
 
 export default class TodoDataService {
@@ -15,6 +17,8 @@ export default class TodoDataService {
 
     ctrl.getItems = _.curry(_getItems)({ $ngRedux });
     ctrl.addItem = _.curry(_addItem)({ $ngRedux });
+    ctrl.saveItem = _.curry(_saveItem)({ $ngRedux });
+    ctrl.removeItem = _.curry(_removeItem)({ $ngRedux });
   }
 }
 
@@ -24,4 +28,12 @@ function _getItems({ $ngRedux }, query) {
 
 function _addItem({ $ngRedux }, item) {
   $ngRedux.dispatch(addItem(item));
+}
+
+function _saveItem({ $ngRedux }, item) {
+  $ngRedux.dispatch(saveItem(item));
+}
+
+function _removeItem({ $ngRedux }, id) {
+  $ngRedux.dispatch(removeItem(id));
 }

@@ -5,7 +5,7 @@ import angular from 'angular';
 import classNames from 'classnames';
 
 export default class TodoEditorController {
-  constructor($ngRedux, $element, $scope) {
+  constructor($ngRedux, $element, $scope, TodoDataService) {
     'ngInject';
 
     const ctrl = this;
@@ -19,43 +19,17 @@ export default class TodoEditorController {
         isNewItem: !!ctrl.isNewItem,
         isFocused: false,
       };
-
       ctrl.mutableItem = angular.copy(ctrl.item || {});
-
-      handleInputEvents();
-
       ctrl.classList = {};
 
-      Object.defineProperty(ctrl.classList, 'submitBtn', {
-        get: () => classNames({
-          'disabled _is_disabled': ctrl.todoItemForm.$invalid || ctrl.todoItemForm.$pristine
-        })
-      });
-
-      Object.defineProperty(ctrl.classList, 'clearBtn', {
-        get: () => classNames({
-          'disabled _is_disabled': ctrl.todoItemForm.$pristine || _.isEmpty(ctrl.mutableItem.title)
-        })
-      });
-
-      Object.defineProperty(ctrl.classList, 'removeBtn', {
-        get: () => classNames({
-          '_is_hidden': !ctrl.state.isFocused
-        })
-      });
+      handleInputEvents();
+      handleClasslists();
     }
 
-    ctrl.saveTodo = _.curry(_saveTodo)({ $ngRedux, ctrl });
-    // ctrl.remove = _.curry(_remove)(_, { $ngRedux, ctrl });
+    ctrl.saveTodo = _.curry(_saveTodo)({ $ngRedux, ctrl, TodoDataService });
+    ctrl.remove = () => _remove({ TodoDataService, ctrl });
 
     ctrl.onTitleInputKeyEvent = _.curry(_onTitleInputKeyEvent)({ ctrl });
-
-    ctrl.remove = () => {
-      $ngRedux.dispatch({
-        type: 'REMOVE_TODO_ITEM',
-        payload: ctrl.mutableItem.id || ctrl.item.id,
-      });
-    };
 
     function handleInputEvents() {
       const onInputFocus$ = Rx.Observable.fromEvent($element.find('input'), 'focus blur');
@@ -79,6 +53,25 @@ export default class TodoEditorController {
       $scope.$on('$destroy', observer.dispose.bind(observer));
     }
 
+    function handleClasslists() {
+      Object.defineProperty(ctrl.classList, 'submitBtn', {
+        get: () => classNames({
+          'disabled _is_disabled': ctrl.todoItemForm.$invalid || ctrl.todoItemForm.$pristine
+        })
+      });
+
+      Object.defineProperty(ctrl.classList, 'clearBtn', {
+        get: () => classNames({
+          'disabled _is_disabled': ctrl.todoItemForm.$pristine || _.isEmpty(ctrl.mutableItem.title)
+        })
+      });
+
+      Object.defineProperty(ctrl.classList, 'removeBtn', {
+        get: () => classNames({
+          '_is_hidden': !ctrl.state.isFocused
+        })
+      });
+    }
   }
 
   submit() {
@@ -95,7 +88,10 @@ export default class TodoEditorController {
 
   reset() {
     const ctrl = this;
-    ctrl.mutableItem = angular.copy(ctrl.item || {});
+    // reset field when not saving an existing item
+    if (!ctrl.item) {
+      ctrl.mutableItem = {};
+    }
   }
 }
 
@@ -111,28 +107,17 @@ function _onTitleInputKeyEvent({ ctrl }, { which: keyCode, type }) {
   action && action.call(ctrl);
 }
 
- function _saveTodo({ $ngRedux, ctrl }, item) {
-  let nextItem = u(u._, {
-    id: _.uniqueId(`$$TodoItem__${_.random()}`),
-    title: null,
-    completed: false,
-    createdAt: new Date().toISOString()
-  });
+function _saveTodo({ $ngRedux, ctrl, TodoDataService }, item) {
 
   const { ordering: todoItemsOrdering } = $ngRedux.getState().todos;
 
   if (ctrl.isNewItem) {
-    $ngRedux.dispatch({
-      type: 'ADD_TODO_ITEM',
-      payload: nextItem(item)
-    });
+    TodoDataService.addItem(item);
   } else {
-    $ngRedux.dispatch({
-      type: 'SAVE_TODO_ITEM',
-      payload: item
-    });
+    TodoDataService.saveItem(item);
   }
 
+  // @NOTE Should middleware be responsible for reordering?
   const { orderProp, order } = todoItemsOrdering;
   $ngRedux.dispatch({
     type: 'TODO_ITEMS_ORDER_BY',
@@ -140,9 +125,8 @@ function _onTitleInputKeyEvent({ ctrl }, { which: keyCode, type }) {
   });
 }
 
-function _remove({ $ngRedux, ctrl }) {
-  $ngRedux.dispatch({
-    type: 'REMOVE_TODO_ITEM',
-    payload: ctrl.mutableItem.id || ctrl.item.id,
-  });
+function _remove({ TodoDataService, ctrl }) {
+  TodoDataService.removeItem(
+    ctrl.mutableItem.id || ctrl.item.id
+  );
 }
